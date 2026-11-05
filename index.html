@@ -181,7 +181,7 @@ function build(){
 }
 function layout(){
   var sw=stage.clientWidth, sh=stage.clientHeight, n=items.length;
-  var bw=Math.max(140,Math.min(sw*0.2,sh*0.34*16/9)), bh=bw*9/16;
+  var bw=Math.max(130,Math.min(sw*0.19,sh*0.32*16/9)), bh=bw*9/16;
   document.documentElement.style.setProperty('--bw',bw+'px');
   spin.querySelectorAll('iframe').forEach(function(f){f.style.transform='scale('+(bw/1440)+')';});
   stage.classList.remove('m-helix','m-grid','m-ring'); stage.classList.add('m-'+mode);
@@ -190,7 +190,7 @@ function layout(){
   spin.querySelectorAll('.panel').forEach(function(p){
     var i=+p.dataset.i, t;
     if(mode==='helix'){
-      var a=i*(360/Math.max(n,5)), R=bw*1.25, gapY=Math.min(bh*0.5,(sh*0.78-bh)/Math.max(1,n-1)), y=(i-(n-1)/2)*gapY;
+      var a=i*(360/Math.max(n,5)), R=bw*1.9, gapY=Math.min(bh*0.62,(sh*0.84-bh)/Math.max(1,n-1)), y=(i-(n-1)/2)*gapY;
       t='rotateY('+a+'deg) translateZ('+R+'px) translateY('+y+'px)';
     }else if(mode==='ring'){
       var a2=i*(360/n), R2=Math.min(sw,sh)*0.36, s2=Math.min(0.7,(2*Math.PI*R2/n)/(bw*1.15));
