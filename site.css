@@ -1,0 +1,97 @@
+/* Shared shell for all inner pages: paper ground, pink + cyan overprint, 思源黑體 */
+:root{
+  --paper:#EEEBE5; --ink:#1E1D1B; --pink:#EC5A9B; --pink-deep:#C23E7D; --cyan:#1AA0DC; --cyan-deep:#127BAA;
+  --stone:#9A968F; --mist:#C6C2BB; --light:#F4F2EE;
+  --font:'Source Han Sans TC','Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;
+  --gutter-l:max(16px, env(safe-area-inset-left, 0px)); --gutter-r:max(16px, env(safe-area-inset-right, 0px));
+  color-scheme:light;
+}
+html,body{background:var(--paper)}
+body{color:var(--ink);font-family:var(--font);overflow-x:hidden}
+.band{padding-left:var(--gutter-l);padding-right:var(--gutter-r)}
+.inner{padding-inline:clamp(0px,3vw,40px)}
+
+header.top{display:flex;justify-content:space-between;align-items:center;gap:12px 16px;flex-wrap:wrap;padding-block:18px;position:relative;z-index:5;border-bottom:3px solid var(--ink)}
+header.top .brand{font-size:18px;font-weight:900;letter-spacing:.06em;text-decoration:none;color:var(--ink)}
+header.top nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.back,.toggle{display:inline-flex;align-items:center;min-height:44px;padding:0 10px;font:inherit;font-size:14px;font-weight:900;color:var(--ink);text-decoration:none;cursor:pointer;border:0;border-radius:0;
+  background:linear-gradient(var(--pink),var(--pink)) no-repeat 10px 72% / calc(100% - 20px) .4em}
+.toggle{font-weight:700;color:#4A4844;background-size:0 .4em}
+.back:focus-visible,.toggle:focus-visible,.rel a:focus-visible,.replay:focus-visible{outline:3px solid var(--cyan);outline-offset:4px}
+
+.phero{position:relative;overflow:hidden;padding-block:clamp(32px,6vw,80px) 28px}
+.phero .eyebrow{font-size:13px;letter-spacing:.24em;font-weight:900;margin-bottom:18px}
+.phero .eyebrow b{color:var(--pink);font-size:1.6em;letter-spacing:0;margin-right:.3em}
+.ph1{margin:0;font-size:clamp(38px,6.4vw,104px);font-weight:900;line-height:1.12;letter-spacing:-.01em;max-width:16em;text-wrap:balance}
+.hl{background:linear-gradient(var(--pink),var(--pink)) no-repeat 0 88% / 100% .42em;-webkit-box-decoration-break:clone;box-decoration-break:clone;padding:0 .08em;mix-blend-mode:multiply}
+.phero .lead{margin:22px 0 0;max-width:34em;font-size:clamp(17px,1.6vw,21px);line-height:1.7;font-weight:500}
+.phero .lead b{background:var(--cyan);padding:0 .2em;font-weight:900}
+.phero .ghost{position:absolute;right:-.05em;top:-.12em;z-index:-1;font-size:clamp(160px,26vw,400px);font-weight:900;line-height:1;color:transparent;-webkit-text-stroke:3px var(--cyan);letter-spacing:-.04em;pointer-events:none}
+
+.wavewrap{height:36px;overflow:hidden}
+.wave{display:block}
+
+.board-sec{padding-block:24px 8px}
+.board{position:relative;max-width:100%;overflow-x:auto;overflow-y:hidden;border:3px solid var(--ink);box-shadow:10px 10px 0 var(--cyan);background:#D8D5CF}
+.board-inner{transform-origin:0 0;position:relative}
+.board-note{margin:14px 0 0;font-size:13px;color:#4A4844}
+
+.rel{padding-block:56px 24px}
+.rel h2{margin:0 0 14px;font-size:14px;letter-spacing:.3em;font-weight:900;color:var(--pink-deep)}
+.rel a{display:flex;align-items:center;gap:20px;flex-wrap:wrap;padding:18px 0;border-top:2px solid var(--ink);text-decoration:none;color:var(--ink)}
+.rel a:last-child{border-bottom:2px solid var(--ink)}
+.rel .n{font-size:clamp(40px,6vw,72px);font-weight:900;line-height:1;width:1.3em;flex:none;color:transparent;-webkit-text-stroke:2px var(--cyan)}
+.rel .t{flex:1 1 280px;font-size:clamp(20px,2.4vw,30px);font-weight:900;min-width:0}
+.rel .ar{font-size:32px;font-weight:900;color:var(--pink)}
+
+.pixels{position:relative;width:100%;aspect-ratio:24/5;max-width:100%;margin-top:40px}
+.pixels span{position:absolute}
+footer.foot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-block:24px 40px;font-size:13px;background:var(--ink);color:var(--mist);margin-top:-1px}
+footer.foot a{color:var(--light)}
+
+/* motion */
+.in-l,.set,.px{animation:fade-in 150ms ease both}
+@media (prefers-reduced-motion: no-preference){
+  .in-l{animation:in-l 700ms cubic-bezier(.16,1,.3,1) both}
+  .set{animation:block-set 400ms cubic-bezier(.16,1,.3,1) both}
+  .hl{animation:hl-in 700ms cubic-bezier(.16,1,.3,1) 250ms both}
+  .px{animation:px-in 360ms cubic-bezier(.16,1,.3,1) both}
+  .wave{animation:wave 1s linear infinite}
+  .paused .wave{animation-play-state:paused}
+  @supports (animation-timeline: view()){
+    .rel a{animation:sx-l linear both;animation-timeline:view();animation-range:entry 0% cover 30%}
+    .rel a:nth-child(odd){animation-name:sx-r}
+  }
+  @media (hover:hover) and (pointer:fine){
+    .rel .ar{transition:transform 260ms cubic-bezier(.34,1.4,.64,1)}
+    .back,.toggle{transition:background-color 100ms ease}
+  }
+}
+@media (hover:hover) and (pointer:fine){
+  .rel a:hover .ar{transform:translateX(12px)}
+  .rel a:hover .t{color:var(--pink-deep)}
+  .back:hover{background-image:linear-gradient(var(--cyan),var(--cyan))}
+  .toggle:hover{color:var(--ink);background-size:calc(100% - 20px) .4em}
+}
+@keyframes fade-in{from{opacity:0}}
+@keyframes in-l{from{opacity:0;transform:translateX(-120px)}}
+@keyframes block-set{from{opacity:0;transform:translateY(24px)}}
+@keyframes hl-in{from{background-size:0% .42em}}
+@keyframes px-in{from{opacity:0;transform:translateY(-28px)}}
+@keyframes wave{to{transform:translateX(-48px)}}
+@keyframes sx-l{from{opacity:0;transform:translateX(-14vw)}}
+@keyframes sx-r{from{opacity:0;transform:translateX(14vw)}}
+
+.ticker{position:relative;z-index:20;display:flex;align-items:center;height:34px;background:#1E1D1B;color:#F8F6F2;font-size:12px;letter-spacing:.08em;overflow:hidden}
+.tk-view{flex:1;min-width:0;overflow:hidden}
+.tk-track{display:flex;width:max-content;white-space:nowrap}
+.tk-g{display:flex}
+.tk-i{padding:0 3.2em}
+.tk-pause{flex:none;height:34px;padding:0 max(14px, env(safe-area-inset-right, 0px)) 0 14px;border:0;background:#1E1D1B;color:#C6C2BB;font:inherit;font-size:12px;cursor:pointer;box-shadow:-12px 0 12px #1E1D1B}
+.tk-pause:focus-visible{outline:2px solid #EC5A9B;outline-offset:-4px}
+@media (prefers-reduced-motion: no-preference){
+.tk-track{animation:tk 48s linear infinite}
+.ticker:hover .tk-track,.ticker:focus-within .tk-track,.ticker.paused .tk-track{animation-play-state:paused}
+}
+@media (prefers-reduced-motion: reduce){.tk-pause{display:none}}
+@keyframes tk{to{transform:translateX(-50%)}}

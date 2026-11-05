@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>時段分工表</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="site.css">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.quote{position:relative;padding-block:40px}
+.quote blockquote{margin:0;max-width:22em;font-size:clamp(26px,3.6vw,52px);font-weight:900;line-height:1.35;text-wrap:balance}
+.quote blockquote::before{content:"「";color:var(--pink)}
+.quote blockquote::after{content:"」";color:var(--pink)}
+.quote cite{display:block;margin-top:14px;font-style:normal;font-size:14px;color:#4A4844}
+.quote .flip{margin-top:28px;display:inline-block;font-size:clamp(18px,2vw,26px);font-weight:900;background:var(--cyan);padding:6px 12px}
+.sec{padding-block:48px 8px}
+.sec h2{margin:0 0 8px;font-size:clamp(26px,3vw,40px);font-weight:900}
+.sec .sub{margin:0 0 22px;font-size:16px;line-height:1.7;max-width:40em}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;margin:0 0 16px;font-size:13px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:14px;height:14px;display:inline-block;border:1px solid var(--ink)}
+.scroll{overflow-x:auto;border:3px solid var(--ink);box-shadow:10px 10px 0 var(--pink);background:#F8F6F2}
+table{border-collapse:collapse;width:100%;min-width:980px;font-size:14px;line-height:1.5}
+th,td{border:1px solid #C9C5BE;padding:10px;vertical-align:top;text-align:left}
+thead th{background:var(--ink);color:var(--light);font-weight:900;position:sticky;top:0}
+thead th button{all:unset;cursor:pointer;display:block;width:100%;min-height:28px}
+thead th button:focus-visible{outline:3px solid var(--cyan);outline-offset:2px}
+thead th.on{background:var(--pink);color:var(--ink)}
+tbody th{width:130px;background:#EEEBE5;font-weight:900;white-space:nowrap}
+tbody th small{display:block;font-weight:500;color:#4A4844;margin-top:2px}
+.tag{display:inline-block;margin-top:6px;font-size:11px;font-weight:700;padding:1px 6px;border:1px solid var(--ink)}
+.tag.real{background:var(--cyan)}
+td.c-move{background:#D3ECF8}
+td.c-front{background:#F9D7E7}
+td.c-tech{background:#E4E1DB}
+td.c-show{background:var(--ink);color:var(--light)}
+td.dim{opacity:.25}
+td:empty::after{content:"—";color:#9A968F}
+.cards{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.cards button{min-height:44px;padding:0 10px;border:0;font:inherit;font-size:15px;font-weight:700;cursor:pointer;color:#4A4844;
+  background:linear-gradient(var(--pink),var(--pink)) no-repeat 10px 72% / 0 .4em}
+.cards button[aria-pressed="true"]{color:var(--ink);font-weight:900;background-size:calc(100% - 20px) .4em}
+.cards button:focus-visible{outline:3px solid var(--cyan);outline-offset:3px}
+.card{background:#F8F6F2;border:3px solid var(--ink);box-shadow:10px 10px 0 var(--cyan);padding:24px;max-width:640px}
+.card h3{margin:0 0 4px;font-size:28px;font-weight:900}
+.card .meta{margin:0 0 16px;font-size:14px;color:#4A4844}
+.card ol{margin:0;padding:0;list-style:none;display:flex;flex-direction:column}
+.card li{display:flex;gap:16px;padding:12px 0;border-top:1px solid #C9C5BE;font-size:16px;line-height:1.6}
+.card li b{flex:none;width:56px;font-variant-numeric:tabular-nums;color:var(--pink-deep)}
+.card .ok{margin-top:16px;display:flex;align-items:center;gap:10px;font-size:15px;font-weight:700}
+.card .ok input{width:22px;height:22px;accent-color:var(--pink)}
+.rules{display:flex;flex-direction:column;border-top:3px solid var(--ink)}
+.rules div{display:flex;flex-wrap:wrap;gap:6px 24px;padding:18px 0;border-bottom:1px solid #9A968F}
+.rules b{flex:0 0 220px;font-size:19px;font-weight:900}
+.rules span{flex:1 1 320px;font-size:16px;line-height:1.7;min-width:0}
+</style>
+</head>
+<body>
+<div id="root">
+<div class="ticker" id="ticker"><div class="tk-view"><div class="tk-track"><span class="tk-g"><span class="tk-i">專注過程</span><span class="tk-i">從一張椅子、一個譜架，到演出落幕</span><span class="tk-i">一個窗口，資訊不落差</span><span class="tk-i">每一筆場館資料都有來源</span><span class="tk-i">先試放，再定案</span><span class="tk-i">[聯絡信箱]</span><span class="tk-i">LINE・Instagram：[帳號]</span></span><span class="tk-g" aria-hidden="true"><span class="tk-i">專注過程</span><span class="tk-i">從一張椅子、一個譜架，到演出落幕</span><span class="tk-i">一個窗口，資訊不落差</span><span class="tk-i">每一筆場館資料都有來源</span><span class="tk-i">先試放，再定案</span><span class="tk-i">[聯絡信箱]</span><span class="tk-i">LINE・Instagram：[帳號]</span></span></div></div><button type="button" class="tk-pause" aria-pressed="false" aria-label="暫停字帶">暫停</button></div>
+<header class="top band"><a class="brand" href="index.html">[公司名稱]</a><nav><a class="back" href="index.html">← 問題總覽</a><button type="button" class="toggle" id="toggle" aria-pressed="false">暫停動態</button></nav></header>
+
+<section class="phero band"><div class="inner">
+<div class="eyebrow set"><b>09</b>時段分工</div>
+<h1 class="ph1 in-l"><span class="hl">工作人員各自負責什麼？</span></h1>
+<p class="lead set" style="animation-delay:300ms">每個時段、每個人，都寫上名字。<b>人越少，越要寫清楚</b>，因為沒有人可以補位。</p>
+</div><div class="ghost" aria-hidden="true">09</div></section>
+
+<div class="wavewrap" aria-hidden="true"><svg class="wave" width="2400" height="36"><defs><pattern id="sc" width="48" height="36" patternUnits="userSpaceOnUse"><path d="M0 18 q12 -14 24 0 t24 0" fill="none" stroke="#EC5A9B" stroke-width="4"/></pattern></defs><rect width="2400" height="36" fill="url(#sc)"/></svg></div>
+
+<section class="quote band"><div class="inner">
+<blockquote>不會有工作分配表，因為工作人員比較少，會比較機動。</blockquote>
+<cite>— 一場音樂會的工作群組，演出前五天</cite>
+<div class="flip">我們的做法：機動也要寫成 A／B 案。</div>
+</div></section>
+
+<section class="sec band"><div class="inner">
+<h2>一張表看完全天</h2>
+<p class="sub">以東吳松怡廳一場下午場音樂會為例。點欄位上的職稱，可以只看那個人的那一欄。標「實際紀錄」的時段來自真實的工作群組，其他是範例時間。</p>
+<div class="legend" aria-label="顏色說明">
+<span><i style="background:#D3ECF8"></i>搬運・擺位</span>
+<span><i style="background:#F9D7E7"></i>前台・觀眾</span>
+<span><i style="background:#E4E1DB"></i>技術・後勤</span>
+<span><i style="background:#1E1D1B"></i>演出中</span>
+</div>
+<div class="scroll"><table id="grid"><thead></thead><tbody></tbody></table></div>
+<p class="board-note">手機上可左右滑動。對外版本只寫職稱；真實姓名與聯絡方式存放在內部後台。</p>
+</div></section>
+
+<section class="sec band"><div class="inner">
+<h2>一人一張任務卡</h2>
+<p class="sub">演出前兩週，每個人只會收到自己的那一張。收到後勾選「已確認」，製作人才算完成發送。</p>
+<div class="cards" id="cards" role="group" aria-label="選擇職稱"></div>
+<div class="card" id="card" aria-live="polite"></div>
+</div></section>
+
+<section class="sec band"><div class="inner">
+<h2>機動，也要事先寫好</h2>
+<div class="rules">
+<div><b>人手不足時</b><span>A 案：舞台助理 B 在 14:00 轉前台支援入場。B 案：前台 C 兼做遲到觀眾的曲間引導。兩案都事先寫進表裡，當天只需要喊「啟動 B 案」。</span></div>
+<div><b>臨時換人</b><span>主持人或工作人員臨時更換時，只改人員名冊，不改分工表；職責跟著職稱走，新的人拿到同一張任務卡。</span></div>
+<div><b>外部廠商</b><span>投影工程師不能離開機器：午餐由前台 C 依時間送到 3 樓，費用用團費支付，舞監負責核銷。這些事都寫進表裡，不留給當天臨時想起來。</span></div>
+<div><b>每次變更</b><span>分工表標上版本號；受影響的人都回覆「已確認」，這次變更才算完成。</span></div>
+</div>
+</div></section>
+
+<section class="rel band"><div class="inner"><h2>接著你可能想問</h2>
+<a href="cue.html"><span class="n">08</span><span class="t">演出當天，誰在哪裡、做什麼？</span><span class="ar">→</span></a>
+<a href="pricing.html"><span class="n">06</span><span class="t">要準備多久、花多少錢？</span><span class="ar">→</span></a>
+</div></section>
+
+<div class="pixels" data-pixels aria-hidden="true"></div>
+<footer class="foot band"><div class="inner" style="display:contents"><span>實際紀錄來自 2026 年 9 月一場東吳松怡廳音樂會的工作群組；其他時段為範例</span><span>v0.3 原型・右上角可暫停動態</span></div></footer>
+</div>
+<script src="site.js"></script>
+<script>
+(function(){
+var ROLES=['舞監','舞台助理 A','舞台助理 B','前台負責人','前台 C','投影組','司儀'];
+// [time, label, source, category, {roleIndex: task}]
+var BLOCKS=[
+ ['08:50','搬運進場','real','move',{0:'在 B2 貨梯口點交鋼琴與用品',1:'搬鋼琴：B2 貨梯 → 2F 松怡廳',2:'搬用品：B2 貨梯 → 2F',4:'支援搬運'}],
+ ['09:00','舞台擺位','real','move',{0:'依座位表核對椅子與譜架數量',1:'擺椅子、譜架',2:'定音鼓就位',4:'支援擺位'}],
+ ['09:40','前台布置','real','front',{0:'確認舞台擺位完成',3:'前台、海報架、節目冊',4:'觀眾席布置、保留席標示'}],
+ ['10:30','技術準備','example','tech',{0:'燈光、音控走一次 CUE',5:'3F 架設投影、測試影片',6:'領取司儀稿'}],
+ ['12:00','午餐','real','tech',{0:'確認餐費核銷',4:'用團費買餐，送到 3F',5:'工程師不能離機，於 3F 用餐'}],
+ ['13:00','樂團彩排','example','tech',{0:'逐條對 CUE',1:'換場演練',2:'換場演練',5:'影片與樂團對拍',6:'走位、試麥克風'}],
+ ['14:00','開放入場','example','front',{0:'後台就位確認',3:'驗票與入場動線',4:'發節目冊、引導入座'}],
+ ['14:30','演出','example','show',{0:'呼叫 CUE',1:'左側門',2:'右側門',3:'遲到觀眾曲間入場',5:'下半場影片播放',6:'開場與串場'}],
+ ['16:30','撤場','example','tech',{0:'撤場確認、點交場館',1:'撤椅子與譜架',2:'鋼琴送回 B2',3:'前台撤收',4:'觀眾席復原',5:'撤投影設備'}]
+];
+var sel=0, focus=-1;
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function grid(){
+  var h='<tr><th scope="col">時段</th>';
+  ROLES.forEach(function(r,i){h+='<th scope="col" class="'+(focus===i?'on':'')+'"><button type="button" data-r="'+i+'" aria-pressed="'+(focus===i)+'">'+esc(r)+'</button></th>';});
+  document.querySelector('#grid thead').innerHTML=h+'</tr>';
+  var b='';
+  BLOCKS.forEach(function(k){
+    b+='<tr><th scope="row">'+k[0]+'<small>'+esc(k[1])+'</small><span class="tag'+(k[2]==='real'?' real':'')+'">'+(k[2]==='real'?'實際紀錄':'範例')+'</span></th>';
+    ROLES.forEach(function(r,i){
+      var t=k[4][i]||'';
+      var cls=(t?'c-'+k[3]:'')+(focus>=0&&focus!==i?' dim':'');
+      b+='<td class="'+cls+'">'+esc(t)+'</td>';
+    });
+    b+='</tr>';
+  });
+  document.querySelector('#grid tbody').innerHTML=b;
+}
+function cards(){
+  var h='';
+  ROLES.forEach(function(r,i){h+='<button type="button" data-c="'+i+'" aria-pressed="'+(sel===i)+'">'+esc(r)+'</button>';});
+  document.getElementById('cards').innerHTML=h;
+  var tasks=BLOCKS.filter(function(k){return k[4][sel];});
+  var c='<h3>'+esc(ROLES[sel])+'</h3><p class="meta">'+tasks.length+' 個時段・服裝：全黑上衣與長褲</p><ol>';
+  tasks.forEach(function(k){c+='<li><b>'+k[0]+'</b><span>'+esc(k[4][sel])+'</span></li>';});
+  c+='</ol><label class="ok"><input type="checkbox" id="ok-'+sel+'">我已看過，確認負責以上工作</label>';
+  document.getElementById('card').innerHTML=c;
+}
+document.getElementById('grid').addEventListener('click',function(e){var b=e.target.closest('button[data-r]');if(!b)return;var r=+b.dataset.r;focus=focus===r?-1:r;grid();});
+document.getElementById('cards').addEventListener('click',function(e){var b=e.target.closest('button[data-c]');if(!b)return;sel=+b.dataset.c;cards();});
+grid();cards();
+})();
+</script>
+<script>(function(){var t=document.getElementById('ticker');if(!t)return;var b=t.querySelector('.tk-pause');b.addEventListener('click',function(){var p=t.classList.toggle('paused');b.setAttribute('aria-pressed',p);b.textContent=p?'播放':'暫停';});})();</script>
+</body>
+</html>

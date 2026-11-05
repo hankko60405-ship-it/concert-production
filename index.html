@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}[hidden]{display:none!important}img{max-width:100%}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
+<title>看不見的過程</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+<style>
+/* Layout: one fixed screen — nav + big title on top; 10 live 16:9 page previews that morph between a helix, rows and a ring; a floating viewer opens one at full size.
+   Single deliberate light world; colors set explicitly. */
+:root{
+  --paper:#F7F6F3; --ink:#1E1D1B; --muted:#5A5853; --line:#E2DFD8;
+  --pink:#EC5A9B; --pink-deep:#C23E7D; --cyan:#1AA0DC;
+  --font:'Source Han Sans TC','Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;
+  --ease:cubic-bezier(.16,1,.3,1);
+  --gl:max(16px, env(safe-area-inset-left, 0px)); --gr:max(16px, env(safe-area-inset-right, 0px));
+  --bw:280px;
+  color-scheme:light;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{background:var(--paper);height:100%;overflow:hidden}
+body{color:var(--ink);font-family:var(--font)}
+a{color:inherit}
+
+.ticker{position:relative;z-index:20;display:flex;align-items:center;height:34px;background:#1E1D1B;color:#F8F6F2;font-size:12px;letter-spacing:.08em;overflow:hidden}
+.tk-view{flex:1;min-width:0;overflow:hidden}
+.tk-track{display:flex;width:max-content;white-space:nowrap}
+.tk-g{display:flex}
+.tk-i{padding:0 3.2em}
+.tk-pause{flex:none;height:34px;padding:0 max(14px, env(safe-area-inset-right, 0px)) 0 14px;border:0;background:#1E1D1B;color:#C6C2BB;font:inherit;font-size:12px;cursor:pointer;box-shadow:-12px 0 12px #1E1D1B}
+.tk-pause:focus-visible{outline:2px solid #EC5A9B;outline-offset:-4px}
+@media (prefers-reduced-motion: no-preference){
+.tk-track{animation:tk 48s linear infinite}
+.ticker:hover .tk-track,.ticker:focus-within .tk-track,.ticker.paused .tk-track{animation-play-state:paused}
+}
+@media (prefers-reduced-motion: reduce){.tk-pause{display:none}}
+@keyframes tk{to{transform:translateX(-50%)}}
+
+.frame{position:relative;height:calc(100% - 34px);display:flex;flex-direction:column;padding-left:var(--gl);padding-right:var(--gr);padding-block:clamp(12px,2vw,24px) 12px}
+.topnav{display:flex;align-items:center;flex-wrap:wrap;gap:4px 22px;font-size:14px;position:relative;z-index:5}
+.brandname{font-weight:900;font-size:15px;letter-spacing:.04em}
+.lk{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0;border:0;background:none;font:inherit;font-size:14px;color:var(--ink);cursor:pointer;text-decoration:none;
+  background-image:linear-gradient(var(--pink),var(--pink));background-repeat:no-repeat;background-position:0 78%;background-size:100% 1px;transition:background-size 250ms var(--ease)}
+.lk[aria-pressed="true"],.lk.strong{font-weight:900;background-size:100% .4em}
+.lk sup{font-size:9px;color:var(--muted)}
+.lk:focus-visible{outline:3px solid var(--cyan);outline-offset:3px}
+.head{margin-top:clamp(10px,2vw,22px);position:relative;z-index:5;pointer-events:none}
+.head h1{margin:0;font-size:clamp(28px,3.6vw,54px);font-weight:900;line-height:1.15;text-wrap:balance;max-width:16em}
+.head h1 span{background:linear-gradient(var(--pink),var(--pink)) no-repeat 0 88%/100% .38em;padding:0 .06em}
+.head p{margin:8px 0 0;font-size:15px;color:var(--muted);max-width:36em;line-height:1.7}
+
+.stage{position:relative;flex:1;min-height:0;perspective:1400px;overflow:hidden;margin-inline:calc(-1 * var(--gl)) calc(-1 * var(--gr))}
+.tilt{position:absolute;left:50%;top:50%;width:0;height:0;transform-style:preserve-3d;transition:transform 900ms var(--ease)}
+.spin{position:absolute;left:0;top:0;width:0;height:0;transform-style:preserve-3d}
+.panel{position:absolute;left:calc(var(--bw) / -2);top:calc(var(--bw) * -9 / 32);width:var(--bw);aspect-ratio:16/9;overflow:hidden;background:#EEEBE5;
+  transition:transform 1000ms var(--ease),opacity 500ms ease;box-shadow:0 14px 30px -18px rgba(30,29,27,.5),0 0 0 1px rgba(30,29,27,.18);cursor:pointer;outline:none}
+.panel:focus-visible{box-shadow:0 0 0 3px var(--cyan)}
+.screen{position:absolute;inset:0;overflow:hidden}
+.screen iframe{position:absolute;left:0;top:0;width:1440px;height:810px;border:0;transform-origin:0 0;pointer-events:none;background:#EEEBE5}
+.tag{position:absolute;left:0;bottom:0;z-index:2;max-width:100%;padding:4px 8px;background:var(--ink);color:#F7F6F3;font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:0;transition:opacity 200ms ease}
+.tag b{color:var(--pink);margin-right:6px}
+.panel:hover .tag,.panel:focus-visible .tag{opacity:1}
+.panel.pending{background:rgba(255,255,255,.7)}
+.panel.pending .screen{display:flex;align-items:center;justify-content:center}
+.soon{font-size:calc(var(--bw) * .06);font-weight:900;color:var(--muted);text-align:center;line-height:1.4;padding:0 8%}
+
+@media (prefers-reduced-motion: no-preference){
+  .m-helix .spin{animation:spinY 46s linear infinite}
+  .m-ring .spin{animation:spinZ 70s linear infinite}
+  .paused .spin{animation-play-state:paused}
+}
+@keyframes spinY{to{transform:rotateY(-360deg)}}
+@keyframes spinZ{to{transform:rotateZ(360deg)}}
+@media (prefers-reduced-motion: reduce){.panel,.tilt{transition:opacity 150ms ease}}
+
+.viewer{position:absolute;inset:0;z-index:60;display:none;background:rgba(247,246,243,.96);cursor:zoom-out}
+.viewer.on{display:block}
+.vbar{position:absolute;left:var(--gl);right:var(--gr);top:10px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;cursor:default}
+.vbar .ttl{font-size:clamp(14px,1.4vw,18px);font-weight:900}
+.vbar .ttl b{color:var(--pink-deep);margin-right:8px}
+.vbar .acts{display:flex;gap:16px;flex-wrap:wrap}
+.vbox{position:absolute;left:50%;top:calc(50% + 22px);transform:translate(-50%,-50%);width:min(94%, calc((100% - 120px) * 16 / 9));aspect-ratio:16/9;max-height:calc(100% - 70px);background:#EEEBE5;box-shadow:0 30px 80px -30px rgba(30,29,27,.45);cursor:default;overflow:hidden}
+.vbox iframe{width:100%;height:100%;border:0;display:block}
+.vsoon{height:100%;display:flex;align-items:center;justify-content:center;font-size:clamp(18px,2.4vw,32px);font-weight:900;color:var(--muted)}
+@media (prefers-reduced-motion: no-preference){.viewer.on .vbox{animation:pop 420ms var(--ease) both}}
+@keyframes pop{from{opacity:0;transform:translate(-50%,-46%) scale(.94)}}
+
+.index{display:none;position:relative;flex:1;min-height:0;overflow:auto;margin-top:clamp(14px,2.4vw,28px);border-top:1px solid var(--ink)}
+.view-index .index{display:block}
+.view-index .stage{display:none}
+.index ol{list-style:none;margin:0;padding:0}
+.index li a,.index li div{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;padding:14px 0;border-bottom:1px solid var(--line);text-decoration:none}
+.index .n{width:2.2em;font-size:18px;font-weight:900;color:var(--pink-deep);font-variant-numeric:tabular-nums}
+.index .t{flex:1 1 260px;font-size:clamp(16px,1.6vw,20px);font-weight:900}
+.index .h{flex:1 1 200px;font-size:13px;color:var(--muted)}
+.index li div{opacity:.5}
+
+.controls{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px 24px;margin-top:8px;font-size:14px;position:relative;z-index:5}
+.group{display:flex;align-items:center;flex-wrap:wrap;gap:4px 18px}
+.contact{font-size:12px;color:var(--muted)}
+@media (hover:hover) and (pointer:fine){.lk:hover{background-size:100% .4em}}
+</style>
+</head>
+<body>
+<div class="ticker" id="ticker"><div class="tk-view"><div class="tk-track"><span class="tk-g"><span class="tk-i">專注過程</span><span class="tk-i">從一張椅子、一個譜架，到演出落幕</span><span class="tk-i">一個窗口，資訊不落差</span><span class="tk-i">每一筆場館資料都有來源</span><span class="tk-i">先試放，再定案</span><span class="tk-i">[聯絡信箱]</span><span class="tk-i">LINE・Instagram：[帳號]</span></span><span class="tk-g" aria-hidden="true"><span class="tk-i">專注過程</span><span class="tk-i">從一張椅子、一個譜架，到演出落幕</span><span class="tk-i">一個窗口，資訊不落差</span><span class="tk-i">每一筆場館資料都有來源</span><span class="tk-i">先試放，再定案</span><span class="tk-i">[聯絡信箱]</span><span class="tk-i">LINE・Instagram：[帳號]</span></span></div></div><button type="button" class="tk-pause" aria-pressed="false" aria-label="暫停字帶">暫停</button></div>
+<div class="frame" id="frame">
+  <nav class="topnav" aria-label="主選單"><span class="brandname">[公司名稱] ・ 專注過程</span><a class="lk" href="about.html">我們是誰</a><a class="lk" href="pricing.html">方案</a></nav>
+
+  <div class="head">
+    <h1><span>好的演出，來自看不見的過程。</span></h1>
+    <p>10 個樂團最常問的問題，每一張都是實際的頁面。點一下就能直接看。</p>
+  </div>
+
+  <div class="stage m-helix" id="stage" role="region" aria-label="10 個問題的頁面預覽，點任一張放大">
+    <div class="tilt" id="tilt"><div class="spin" id="spin"></div></div>
+  </div>
+  <div class="index" id="index"><ol id="list"></ol></div>
+
+  <div class="controls">
+    <div class="group">
+      <button type="button" class="lk" id="v-overview" aria-pressed="true">10 個問題</button>
+      <span class="group" id="filters" role="group" aria-label="依階段篩選"></span>
+      <button type="button" class="lk" id="v-index" aria-pressed="false">清單</button>
+    </div>
+    <div class="group" id="modes" role="group" aria-label="排列方式">
+      <button type="button" class="lk" id="pause" aria-pressed="false">暫停動態</button>
+    </div>
+    <div class="contact">專案洽詢：[聯絡信箱]・LINE・Instagram：[帳號]</div>
+  </div>
+
+  <div class="viewer" id="viewer" role="dialog" aria-modal="true" aria-labelledby="vttl">
+    <div class="vbar" id="vbar">
+      <span class="ttl" id="vttl"></span>
+      <span class="acts">
+        <button type="button" class="lk" id="vprev">← 上一頁</button>
+        <button type="button" class="lk" id="vnext">下一頁 →</button>
+        <a class="lk strong" id="vfull" href="#">開啟完整頁面 →</a>
+        <button type="button" class="lk" id="vclose">關閉 ✕</button>
+      </span>
+    </div>
+    <div class="vbox" id="vbox"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+var Q=[
+ ['01','認識','你們是誰？能幫我們的音樂會做什麼？','about.html','分擔、增值、累積'],
+ ['02','認識','你們做過哪些音樂會？',null,'案例'],
+ ['03','規劃','台北有哪些場地可以辦？','map.html','25 處場館地圖'],
+ ['04','規劃','這個場館有什麼要注意的？','venue.html','東吳松怡廳資料卡'],
+ ['05','規劃','我們的編制放得下這個舞台嗎？','plan.html','55 人編制試放'],
+ ['06','規劃','要準備多久、花多少錢？','pricing.html','三個方案與時程'],
+ ['07','執行','樂手要坐哪裡？','seats.html','扇形座位表'],
+ ['08','執行','演出當天，誰在哪裡、做什麼？','cue.html','CUE 疊加'],
+ ['09','執行','工作人員各自負責什麼？','staff.html','時段分工與任務卡'],
+ ['10','開始','怎麼開始合作？',null,'聯絡與預約']
+];
+var filter='全部', mode='helix', items=[], cur=-1;
+var stage=document.getElementById('stage'), tilt=document.getElementById('tilt'), spin=document.getElementById('spin'), frame=document.getElementById('frame');
+var viewer=document.getElementById('viewer'), vbox=document.getElementById('vbox');
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+
+function build(){
+  items=Q.filter(function(q){return filter==='全部'||q[1]===filter;});
+  var h='';
+  items.forEach(function(q,i){
+    var live=!!q[3];
+    h+='<div class="panel'+(live?'':' pending')+'" data-i="'+i+'" role="button" tabindex="0" aria-label="'+q[0]+' '+esc(q[2])+(live?'，按 Enter 放大':'（準備中）')+'">'+
+      '<div class="screen">'+(live?'<iframe title="'+esc(q[2])+'" src="'+q[3]+'" tabindex="-1" loading="lazy"></iframe>':'<div class="soon">'+esc(q[2])+'<br>準備中</div>')+'</div>'+
+      '<div class="tag"><b>'+q[0]+'</b>'+esc(q[2])+'</div></div>';
+  });
+  spin.innerHTML=h;
+  var l='';
+  items.forEach(function(q){l+='<li>'+(q[3]?'<a href="'+q[3]+'">':'<div>')+'<span class="n">'+q[0]+'</span><span class="t">'+esc(q[2])+'</span><span class="h">'+(q[3]?q[4]:'準備中')+'</span>'+(q[3]?'</a>':'</div>')+'</li>';});
+  document.getElementById('list').innerHTML=l;
+  layout();
+}
+function layout(){
+  var sw=stage.clientWidth, sh=stage.clientHeight, n=items.length;
+  var bw=Math.max(140,Math.min(sw*0.2,sh*0.34*16/9)), bh=bw*9/16;
+  document.documentElement.style.setProperty('--bw',bw+'px');
+  spin.querySelectorAll('iframe').forEach(function(f){f.style.transform='scale('+(bw/1440)+')';});
+  stage.classList.remove('m-helix','m-grid','m-ring'); stage.classList.add('m-'+mode);
+  if(mode==='helix')tilt.style.transform='rotateX(-10deg)';
+  else tilt.style.transform='none';
+  spin.querySelectorAll('.panel').forEach(function(p){
+    var i=+p.dataset.i, t;
+    if(mode==='helix'){
+      var a=i*(360/Math.max(n,5)), R=bw*1.25, gapY=Math.min(bh*0.5,(sh*0.78-bh)/Math.max(1,n-1)), y=(i-(n-1)/2)*gapY;
+      t='rotateY('+a+'deg) translateZ('+R+'px) translateY('+y+'px)';
+    }else if(mode==='ring'){
+      var a2=i*(360/n), R2=Math.min(sw,sh)*0.36, s2=Math.min(0.7,(2*Math.PI*R2/n)/(bw*1.15));
+      t='rotateZ('+a2+'deg) translateY('+(-R2)+'px) scale('+s2.toFixed(3)+')';
+    }else{
+      var cols=n>4?Math.ceil(n/2):n, rows=Math.ceil(n/cols), gap=bw*0.12, col=i%cols, row=Math.floor(i/cols);
+      var sc=Math.min(1.15,(sw*0.92)/(cols*(bw+gap)),(sh*0.9)/(rows*(bh+gap)));
+      var x=(col-(cols-1)/2)*(bw+gap)*sc, y2=(row-(rows-1)/2)*(bh+gap)*sc;
+      t='translate3d('+x+'px,'+y2+'px,0) scale('+sc.toFixed(3)+')';
+    }
+    p.style.transform=t;
+  });
+}
+function openAt(i){
+  cur=((i%items.length)+items.length)%items.length;
+  var q=items[cur];
+  document.getElementById('vttl').innerHTML='<b>'+q[0]+'</b>'+esc(q[2]);
+  vbox.innerHTML=q[3]?'<iframe title="'+esc(q[2])+'" src="'+q[3]+'"></iframe>':'<div class="vsoon">準備中・'+esc(q[4])+'</div>';
+  var full=document.getElementById('vfull'); if(q[3]){full.href=q[3];full.hidden=false;}else full.hidden=true;
+  viewer.classList.add('on'); document.getElementById('vclose').focus({preventScroll:true});
+}
+function close(){if(!viewer.classList.contains('on'))return;viewer.classList.remove('on');vbox.innerHTML='';var p=spin.querySelector('.panel[data-i="'+cur+'"]');if(p)p.focus({preventScroll:true});}
+
+spin.addEventListener('click',function(e){var p=e.target.closest('.panel');if(p)openAt(+p.dataset.i);});
+spin.addEventListener('keydown',function(e){var p=e.target.closest('.panel');if(p&&(e.key==='Enter'||e.key===' ')){e.preventDefault();openAt(+p.dataset.i);}});
+viewer.addEventListener('click',function(e){if(e.target.closest('#vbox')||e.target.closest('#vbar'))return;close();});
+document.getElementById('vclose').addEventListener('click',close);
+document.getElementById('vprev').addEventListener('click',function(){openAt(cur-1);});
+document.getElementById('vnext').addEventListener('click',function(){openAt(cur+1);});
+document.addEventListener('keydown',function(e){
+  if(!viewer.classList.contains('on'))return;
+  if(e.key==='Escape')close();
+  if(e.key==='ArrowRight')openAt(cur+1);
+  if(e.key==='ArrowLeft')openAt(cur-1);
+});
+window.addEventListener('resize',layout);
+
+var M=document.getElementById('modes');
+M.addEventListener('click',function(e){
+  var b=e.target.closest('button[data-m]');
+  if(b){mode=b.dataset.m;M.querySelectorAll('button[data-m]').forEach(function(x){x.setAttribute('aria-pressed',x.dataset.m===mode);});layout();return;}
+  if(e.target.closest('#pause')){var p=stage.classList.toggle('paused');var pb=document.getElementById('pause');pb.setAttribute('aria-pressed',p);pb.textContent=p?'播放動態':'暫停動態';}
+});
+var groups=['認識','規劃','執行','開始'], fh='';
+groups.forEach(function(g){var c=Q.filter(function(q){return q[1]===g;}).length;fh+='<button type="button" class="lk" data-g="'+g+'" aria-pressed="false">'+g+'<sup>'+c+'</sup></button>';});
+var F=document.getElementById('filters'); F.innerHTML=fh;
+function setFilter(g){filter=g;F.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed',x.dataset.g===filter);});document.getElementById('v-overview').setAttribute('aria-pressed',filter==='全部'&&!frame.classList.contains('view-index'));build();}
+F.addEventListener('click',function(e){var b=e.target.closest('button[data-g]');if(!b)return;view('overview');setFilter(filter===b.dataset.g?'全部':b.dataset.g);});
+function view(v){close();frame.classList.toggle('view-index',v==='index');document.getElementById('v-overview').setAttribute('aria-pressed',v!=='index'&&filter==='全部');document.getElementById('v-index').setAttribute('aria-pressed',v==='index');if(v!=='index')layout();}
+document.getElementById('v-overview').addEventListener('click',function(){view('overview');setFilter('全部');});
+document.getElementById('v-index').addEventListener('click',function(){view('index');});
+build();
+})();
+</script>
+<script>(function(){var t=document.getElementById('ticker');if(!t)return;var b=t.querySelector('.tk-pause');b.addEventListener('click',function(){var p=t.classList.toggle('paused');b.setAttribute('aria-pressed',p);b.textContent=p?'播放':'暫停';});})();</script>
+</body>
+</html>
