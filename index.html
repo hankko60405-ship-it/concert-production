@@ -101,6 +101,18 @@ a{color:inherit}
 .group{display:flex;align-items:center;flex-wrap:wrap;gap:4px 18px}
 .contact{font-size:12px;color:var(--muted)}
 @media (hover:hover) and (pointer:fine){.lk:hover{background-size:100% .4em}}
+@media (max-width:760px){
+  .stage{touch-action:none;perspective:900px}
+  .head h1{font-size:clamp(22px,7vw,30px)}
+  .head p{font-size:13px;margin-top:4px}
+  .topnav{gap:2px 16px}
+  .controls{gap:0 14px;font-size:13px}
+  .controls .lk{min-height:40px}
+  .contact{display:none}
+  .vbar{top:6px}
+  .vbar .acts{gap:12px}
+  .vbox{width:calc(100% - 16px);height:calc(100% - 96px);aspect-ratio:auto;max-height:none;top:calc(50% + 36px)}
+}
 </style>
 </head>
 <body>
@@ -180,7 +192,8 @@ function build(){
 }
 function layout(){
   var sw=stage.clientWidth, sh=stage.clientHeight, n=items.length;
-  var bw=Math.max(130,Math.min(sw*0.19,sh*0.32*16/9)), bh=bw*9/16;
+  var narrow=sw<700;
+  var bw=narrow?Math.min(sw*0.66,320):Math.max(130,Math.min(sw*0.19,sh*0.32*16/9)), bh=bw*9/16;
   document.documentElement.style.setProperty('--bw',bw+'px');
   spin.querySelectorAll('iframe').forEach(function(f){f.style.transform='scale('+(bw/1440)+')';});
   stage.classList.remove('m-helix','m-grid','m-ring'); stage.classList.add('m-'+mode);
@@ -189,7 +202,7 @@ function layout(){
   spin.querySelectorAll('.panel').forEach(function(p){
     var i=+p.dataset.i, t;
     if(mode==='helix'){
-      HX={n:n,R:bw*1.9,gapY:Math.min(bh*0.62,(sh*0.84-bh)/Math.max(1,n-1))};
+      HX=narrow?{n:n,R:bw*0.55,gapY:bh*1.12}:{n:n,R:bw*1.9,gapY:Math.min(bh*0.62,(sh*0.84-bh)/Math.max(1,n-1))};
       return;
     }else if(mode==='ring'){
       var a2=i*(360/n), R2=Math.min(sw,sh)*0.36, s2=Math.min(0.7,(2*Math.PI*R2/n)/(bw*1.15));

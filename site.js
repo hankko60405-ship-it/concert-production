@@ -23,13 +23,29 @@
     box.innerHTML = html;
   });
 
-  // fixed-size boards scale to fit; below half size they scroll sideways instead
+  // fixed-size boards: fit the whole chart to the screen width; on phones a text button
+  // switches to a zoomed view (about 60% size) that scrolls sideways inside the chart
+  document.querySelectorAll('.board').forEach(function (b) {
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'zoom-btn';
+    btn.textContent = '放大圖表';
+    btn.setAttribute('aria-pressed', 'false');
+    btn.addEventListener('click', function () {
+      var z = b.classList.toggle('zoomed');
+      btn.textContent = z ? '縮回整張' : '放大圖表';
+      btn.setAttribute('aria-pressed', z ? 'true' : 'false');
+      fit();
+    });
+    b.parentElement.insertBefore(btn, b);
+  });
   function fit() {
     document.querySelectorAll('.board').forEach(function (b) {
       var inner = b.querySelector('.board-inner');
       var w = +b.dataset.w, h = +b.dataset.h;
       var avail = b.parentElement.clientWidth - 6;
-      var s = Math.max(0.5, Math.min(1, avail / w));
+      var s = Math.min(1, avail / w);
+      if (b.classList.contains('zoomed')) s = Math.max(s, 0.6);
       inner.style.transform = 'scale(' + s + ')';
       inner.style.width = w + 'px';
       inner.style.height = h + 'px';

@@ -95,3 +95,17 @@ footer.foot a{color:var(--light)}
 }
 @media (prefers-reduced-motion: reduce){.tk-pause{display:none}}
 @keyframes tk{to{transform:translateX(-50%)}}
+
+/* phone: chart zoom toggle (plain text, pink underline) */
+.zoom-btn{display:none;align-items:center;min-height:44px;padding:0;margin:0 0 6px;border:0;font:inherit;font-size:14px;font-weight:900;cursor:pointer;color:var(--ink);
+  background:linear-gradient(var(--pink),var(--pink)) no-repeat 0 72% / 100% .4em}
+.zoom-btn:focus-visible{outline:3px solid var(--cyan);outline-offset:3px}
+@media (max-width:760px){
+  .zoom-btn{display:inline-flex}
+  .board{box-shadow:5px 5px 0 var(--cyan)}
+  .board.zoomed{-webkit-overflow-scrolling:touch}
+  .phero{padding-block:24px 18px}
+  .ph1{font-size:clamp(28px,8vw,40px)}
+  .phero .ghost{font-size:120px}
+  header.top nav{gap:4px}
+}
