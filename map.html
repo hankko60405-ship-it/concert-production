@@ -33,11 +33,11 @@ img{max-width:100%}
 <div class="board" data-w="1600" data-h="1120"><div class="board-scale" style="position:relative;overflow:hidden"><div class="board-inner" style="position:absolute;left:0;top:0">
 
 
-<div style="position: relative; width: 1600px; height: 1120px; background: #D8D5CF; font-family: 'Source Han Sans TC', 'Noto Sans TC', sans-serif; color: #1E1D1B; overflow: hidden">
+<div style="position: relative; width: 1600px; height: 1120px; background: #F7F6F3; font-family: 'Source Han Sans TC', 'Noto Sans TC', sans-serif; color: #1E1D1B; overflow: hidden">
 
 <img src="taipei_districts.svg" alt="臺北市 12 個行政區底圖" style="position: absolute; left: 0; top: 0; width: 820px; height: 1100px">
 
-<div style="position: absolute; left: 0; top: 0; width: 820px; height: 1100px; font-size: 14px; font-weight: 700; color: #6E6B66; letter-spacing: 0.1em">
+<div style="position: absolute; left: 0; top: 0; width: 820px; height: 1100px; font-size: 14px; font-weight: 700; color: #5A5853; letter-spacing: 0.1em">
 <span style="position: absolute; left: 271px; top: 372px; transform: translate(-50%, -50%)">北投區</span>
 <span style="position: absolute; left: 379px; top: 467px; transform: translate(-50%, -50%)">士林區</span>
 <span style="position: absolute; left: 515px; top: 607px; transform: translate(-50%, -50%)">內湖區</span>
@@ -70,7 +70,7 @@ img{max-width:100%}
 </div>
 <div style="position: absolute; left: 64px; top: 1000px; display: flex; gap: 20px; font-size: 13px; color: #2A2927; align-items: center">
 <span style="display: flex; gap: 6px; align-items: center"><span style="width: 14px; height: 14px; background: #2A2927"></span>音樂廳・演藝廳</span>
-<span style="display: flex; gap: 6px; align-items: center"><span style="width: 14px; height: 14px; background: #7E7A74"></span>學校</span>
+<span style="display: flex; gap: 6px; align-items: center"><span style="width: 14px; height: 14px; background: #1AA0DC"></span>學校</span>
 <span style="display: flex; gap: 6px; align-items: center"><span style="width: 14px; height: 14px; border-radius: 50%; background: #F4F2EE; border: 2px solid #3B3A37; box-sizing: border-box"></span>戶外・園區</span>
 <span style="display: flex; gap: 6px; align-items: center"><span style="width: 14px; height: 14px; background: #EC5A9B"></span>已建檔</span>
 </div>
@@ -87,12 +87,12 @@ img{max-width:100%}
 <div id="mp-filters" style="display:contents"></div>
 </div>
 
-<div style="background: #3B3A37; box-shadow: 0 6px 0 #232220; color: #F4F2EE; padding: 22px 24px; display: flex; flex-direction: column; gap: 8px; font-size: 15px; line-height: 1.55">
-<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px"><span style="font-size: 24px; font-weight: 700"><span id="mp-sel-name"></span></span><span style="font-size: 13px; color: #C6C2BB; white-space: nowrap"><span id="mp-sel-typeLabel"></span></span></div>
-<div><span style="color: #C6C2BB">地址</span>　<span id="mp-sel-addr"></span></div>
-<div><span style="color: #C6C2BB">座位</span>　<span id="mp-sel-seats"></span></div>
-<div><span style="color: #C6C2BB">狀態</span>　<span id="mp-sel-status"></span></div>
-<div><span style="color: #C6C2BB">來源</span>　<span id="mp-sel-src"></span></div>
+<div style="background: transparent; border-top: 3px solid #EC5A9B; color: #1E1D1B; padding: 22px 24px; display: flex; flex-direction: column; gap: 8px; font-size: 15px; line-height: 1.55">
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px"><span style="font-size: 24px; font-weight: 700"><span id="mp-sel-name"></span></span><span style="font-size: 13px; color: #5A5853; white-space: nowrap"><span id="mp-sel-typeLabel"></span></span></div>
+<div><span style="color: #5A5853">地址</span>　<span id="mp-sel-addr"></span></div>
+<div><span style="color: #5A5853">座位</span>　<span id="mp-sel-seats"></span></div>
+<div><span style="color: #5A5853">狀態</span>　<span id="mp-sel-status"></span></div>
+<div><span style="color: #5A5853">來源</span>　<span id="mp-sel-src"></span></div>
 </div>
 
 <div style="display: flex; flex-direction: column; gap: 8px">
@@ -150,7 +150,7 @@ function render(){
   var mh='';
   V.forEach(function(v,i){
     var done=v[5].indexOf('已建檔')===0;
-    var fill=done?'#EC5A9B':v[1]==='hall'?'#2A2927':v[1]==='school'?'#7E7A74':'#F4F2EE';
+    var fill=done?'#EC5A9B':v[1]==='hall'?'#2A2927':v[1]==='school'?'#1AA0DC':'#F4F2EE';
     var shape=v[1]==='outdoor'?'border-radius:50%;border:2px solid #3B3A37;':'border-radius:2px;border:2px solid #F4F2EE;';
     var ring=i===sel?'outline:3px solid #1AA0DC;outline-offset:3px;':'';
     mh+='<button type="button" data-i="'+i+'" aria-label="'+esc(v[0])+'" aria-pressed="'+(i===sel)+'" style="position:absolute;left:'+(v[7]-11)+'px;top:'+(v[8]-11)+'px;width:22px;height:22px;padding:0;box-sizing:border-box;cursor:pointer;background:'+fill+';'+shape+ring+'opacity:'+(on(v)?1:0.18)+';box-shadow:0 3px 0 rgba(30,29,27,0.35)"></button>';
@@ -159,7 +159,7 @@ function render(){
   var fh='';
   [['all','全部'],['hall','音樂廳・演藝廳'],['school','學校'],['outdoor','戶外・園區']].forEach(function(p){
     var n=p[0]==='all'?V.length:V.filter(function(v){return v[1]===p[0];}).length, act=f===p[0];
-    fh+='<button type="button" data-f="'+p[0]+'" aria-pressed="'+act+'" style="min-height:44px;padding:0 18px;border:0;font:inherit;font-size:15px;cursor:pointer;'+(act?'background:#EC5A9B;color:#1E1D1B;box-shadow:0 4px 0 #C23E7D;font-weight:700;':'background:#EEECE8;color:#1E1D1B;box-shadow:0 4px 0 #9C9891;')+'">'+p[1]+'  '+n+'</button>';
+    fh+='<button type="button" data-f="'+p[0]+'" aria-pressed="'+act+'" style="min-height:44px;padding:0 18px;border:0;font:inherit;font-size:15px;cursor:pointer;'+(act?'background:linear-gradient(#EC5A9B,#EC5A9B) no-repeat 14px 80%/calc(100% - 28px) .35em;color:#1E1D1B;font-weight:900;':'background:none;color:#5A5853;')+'">'+p[1]+'  '+n+'</button>';
   });
   document.getElementById('mp-filters').innerHTML=fh;
   var list=V.filter(on);
@@ -175,7 +175,7 @@ function render(){
   var max=Math.max.apply(null,[1].concat(counts.map(function(c){return c.n;})));
   var dh='';
   counts.forEach(function(c){
-    dh+='<div style="display:flex;align-items:center;gap:12px;font-size:14px"><span style="width:56px;flex:none">'+c.name+'</span><span style="flex:1;height:16px;background:#C9C5BE;position:relative"><span style="position:absolute;left:0;top:0;bottom:0;width:'+(c.n/max*100)+'%;background:#3B3A37"></span></span><span style="width:24px;text-align:right;font-weight:700">'+c.n+'</span></div>';
+    dh+='<div style="display:flex;align-items:center;gap:12px;font-size:14px"><span style="width:56px;flex:none">'+c.name+'</span><span style="flex:1;height:16px;background:#EAF5FB;position:relative"><span style="position:absolute;left:0;top:0;bottom:0;width:'+(c.n/max*100)+'%;background:#3B3A37"></span></span><span style="width:24px;text-align:right;font-weight:700">'+c.n+'</span></div>';
   });
   document.getElementById('mp-dist').innerHTML=dh;
 }

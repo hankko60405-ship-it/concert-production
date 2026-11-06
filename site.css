@@ -1,6 +1,6 @@
 /* Shared shell for all inner pages: paper ground, pink + cyan overprint, 思源黑體 */
 :root{
-  --paper:#EEEBE5; --ink:#1E1D1B; --pink:#EC5A9B; --pink-deep:#C23E7D; --cyan:#1AA0DC; --cyan-deep:#127BAA;
+  --paper:#F7F6F3; --ink:#1E1D1B; --pink:#EC5A9B; --pink-deep:#C23E7D; --cyan:#1AA0DC; --cyan-deep:#127BAA;
   --stone:#9A968F; --mist:#C6C2BB; --light:#F4F2EE;
   --font:'Source Han Sans TC','Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;
   --gutter-l:max(16px, env(safe-area-inset-left, 0px)); --gutter-r:max(16px, env(safe-area-inset-right, 0px));
@@ -32,7 +32,7 @@ header.top nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .wave{display:block}
 
 .board-sec{padding-block:24px 8px}
-.board{position:relative;max-width:100%;overflow-x:auto;overflow-y:hidden;border:3px solid var(--ink);box-shadow:10px 10px 0 var(--cyan);background:#D8D5CF}
+.board{position:relative;max-width:100%;overflow-x:auto;overflow-y:hidden;border:3px solid var(--ink);box-shadow:10px 10px 0 var(--cyan);background:#FFFFFF}
 .board-inner{transform-origin:0 0;position:relative}
 .board-note{margin:14px 0 0;font-size:13px;color:#4A4844}
 

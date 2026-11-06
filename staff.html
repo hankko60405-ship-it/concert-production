@@ -26,21 +26,21 @@ html,body{margin:0}
 .legend i{width:14px;height:14px;display:inline-block;border:1px solid var(--ink)}
 .scroll{overflow-x:auto;border:3px solid var(--ink);box-shadow:10px 10px 0 var(--pink);background:#F8F6F2}
 table{border-collapse:collapse;width:100%;min-width:980px;font-size:14px;line-height:1.5}
-th,td{border:1px solid #C9C5BE;padding:10px;vertical-align:top;text-align:left}
+th,td{border:1px solid #E2DFD8;padding:10px;vertical-align:top;text-align:left}
 thead th{background:var(--ink);color:var(--light);font-weight:900;position:sticky;top:0}
 thead th button{all:unset;cursor:pointer;display:block;width:100%;min-height:28px}
 thead th button:focus-visible{outline:3px solid var(--cyan);outline-offset:2px}
 thead th.on{background:var(--pink);color:var(--ink)}
-tbody th{width:130px;background:#EEEBE5;font-weight:900;white-space:nowrap}
+tbody th{width:130px;background:#F7F6F3;font-weight:900;white-space:nowrap}
 tbody th small{display:block;font-weight:500;color:#4A4844;margin-top:2px}
 .tag{display:inline-block;margin-top:6px;font-size:11px;font-weight:700;padding:1px 6px;border:1px solid var(--ink)}
 .tag.real{background:var(--cyan)}
 td.c-move{background:#D3ECF8}
 td.c-front{background:#F9D7E7}
-td.c-tech{background:#E4E1DB}
+td.c-tech{background:#FFFFFF}
 td.c-show{background:var(--ink);color:var(--light)}
 td.dim{opacity:.25}
-td:empty::after{content:"—";color:#9A968F}
+td:empty::after{content:"—";color:#D8D4CC}
 .cards{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
 .cards button{min-height:44px;padding:0 10px;border:0;font:inherit;font-size:15px;font-weight:700;cursor:pointer;color:#4A4844;
   background:linear-gradient(var(--pink),var(--pink)) no-repeat 10px 72% / 0 .4em}
@@ -50,12 +50,12 @@ td:empty::after{content:"—";color:#9A968F}
 .card h3{margin:0 0 4px;font-size:28px;font-weight:900}
 .card .meta{margin:0 0 16px;font-size:14px;color:#4A4844}
 .card ol{margin:0;padding:0;list-style:none;display:flex;flex-direction:column}
-.card li{display:flex;gap:16px;padding:12px 0;border-top:1px solid #C9C5BE;font-size:16px;line-height:1.6}
+.card li{display:flex;gap:16px;padding:12px 0;border-top:1px solid #E2DFD8;font-size:16px;line-height:1.6}
 .card li b{flex:none;width:56px;font-variant-numeric:tabular-nums;color:var(--pink-deep)}
 .card .ok{margin-top:16px;display:flex;align-items:center;gap:10px;font-size:15px;font-weight:700}
 .card .ok input{width:22px;height:22px;accent-color:var(--pink)}
 .rules{display:flex;flex-direction:column;border-top:3px solid var(--ink)}
-.rules div{display:flex;flex-wrap:wrap;gap:6px 24px;padding:18px 0;border-bottom:1px solid #9A968F}
+.rules div{display:flex;flex-wrap:wrap;gap:6px 24px;padding:18px 0;border-bottom:1px solid #D8D4CC}
 .rules b{flex:0 0 220px;font-size:19px;font-weight:900}
 .rules span{flex:1 1 320px;font-size:16px;line-height:1.7;min-width:0}
 </style>
@@ -85,7 +85,7 @@ td:empty::after{content:"—";color:#9A968F}
 <div class="legend" aria-label="顏色說明">
 <span><i style="background:#D3ECF8"></i>搬運・擺位</span>
 <span><i style="background:#F9D7E7"></i>前台・觀眾</span>
-<span><i style="background:#E4E1DB"></i>技術・後勤</span>
+<span><i style="background:#FFFFFF"></i>技術・後勤</span>
 <span><i style="background:#1E1D1B"></i>演出中</span>
 </div>
 <div class="scroll"><table id="grid"><thead></thead><tbody></tbody></table></div>
