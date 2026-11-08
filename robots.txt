@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://hankko60405-ship-it.github.io/concert-production/sitemap.xml
