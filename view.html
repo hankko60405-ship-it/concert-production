@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>座位視角・東吳松怡廳</title>
+<meta name="description" content="點一個座位，看從那裡望向舞台的樣子。以東吳松怡廳 471 席、55 人管弦樂編制為例的 3D 座位視角模擬。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="site.css">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+
+.sv{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(280px,1fr);gap:28px 36px;align-items:start;padding-block:12px 8px}
+.view3d{position:relative;width:100%;aspect-ratio:16/10;background:#F1EEE8;overflow:hidden;cursor:grab;touch-action:none;box-shadow:0 0 0 1px rgba(30,29,27,.18)}
+.view3d:active{cursor:grabbing}
+.view3d canvas{display:block;width:100%;height:100%}
+.view3d .hint{position:absolute;left:14px;bottom:10px;font-size:12px;color:#4A4844;pointer-events:none}
+.view3d .seatname{position:absolute;left:14px;top:10px;font-size:15px;font-weight:900;pointer-events:none}
+.view3d .seatname b{background:linear-gradient(var(--pink),var(--pink)) no-repeat 0 85% / 100% .4em}
+.view3d .fail{position:absolute;inset:0;display:none;align-items:center;justify-content:center;padding:24px;text-align:center;font-size:14px;line-height:1.7;color:#4A4844}
+
+.side h2{margin:0 0 8px;font-size:13px;letter-spacing:.24em;font-weight:900;color:var(--pink-deep)}
+.map{display:block;width:100%;height:auto;outline:none}
+.map:focus-visible{outline:3px solid var(--cyan);outline-offset:4px}
+.map .seat{cursor:pointer}
+.map .seat:hover{fill:var(--pink)}
+.maplegend{margin:4px 0 0;font-size:12px;color:#4A4844;line-height:1.6}
+.pick{display:flex;flex-wrap:wrap;gap:0 14px;margin:6px 0 4px}
+.pick button,.pick select,.opt{font:inherit;font-size:14px;font-weight:700;color:var(--ink);background:none;border:0;border-radius:0;padding:0;min-height:40px;cursor:pointer;
+  background-image:linear-gradient(var(--pink),var(--pink));background-repeat:no-repeat;background-position:0 78%;background-size:100% .35em}
+.pick select{padding-right:2px}
+.pick button:focus-visible,.pick select:focus-visible,.opt:focus-visible{outline:3px solid var(--cyan);outline-offset:3px}
+.pick .lab{font-size:13px;color:#4A4844;align-self:center}
+
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px 20px;margin:18px 0 0;padding-top:16px;border-top:2px solid var(--ink)}
+.stats div{min-width:0}
+.stats .v{font-size:clamp(26px,3vw,38px);font-weight:900;line-height:1.05;font-variant-numeric:tabular-nums}
+.stats .v small{font-size:.45em;font-weight:700;margin-left:2px}
+.stats .k{font-size:12px;color:#4A4844;margin-top:4px;line-height:1.5}
+.say{margin:16px 0 0;font-size:15px;line-height:1.75}
+.opts{display:flex;flex-wrap:wrap;gap:0 18px;margin-top:10px}
+.opt[aria-pressed="false"]{background-size:0 .35em;color:#4A4844}
+
+.todo{margin:36px 0 0;padding-top:14px;border-top:3px solid var(--pink);max-width:52em}
+.todo h2{margin:0 0 8px;font-size:14px;letter-spacing:.24em;font-weight:900;color:var(--pink-deep)}
+.todo ol{margin:0;padding-left:1.4em;font-size:14px;line-height:1.9}
+.src{margin:16px 0 0;font-size:13px;color:#4A4844;line-height:1.7;max-width:52em}
+
+@media (max-width:860px){
+  .sv{grid-template-columns:minmax(0,1fr)}
+  .view3d{aspect-ratio:4/3}
+}
+</style>
+</head>
+<body>
+<div id="root">
+<div class="ticker" id="ticker"><div class="tk-view"><div class="tk-track"><span class="tk-g"><span class="tk-i">專注過程</span><span class="tk-i">從一張椅子、一個譜架，到演出落幕</span><span class="tk-i">一個窗口，資訊不落差</span><span class="tk-i">每一筆場館資料都有來源</span><span class="tk-i">先試放，再定案</span><span class="tk-i">[聯絡信箱]</span><span class="tk-i">LINE・Instagram：[帳號]</span></span><span class="tk-g" aria-hidden="true"><span class="tk-i">專注過程</span><span class="tk-i">從一張椅子、一個譜架，到演出落幕</span><span class="tk-i">一個窗口，資訊不落差</span><span class="tk-i">每一筆場館資料都有來源</span><span class="tk-i">先試放，再定案</span><span class="tk-i">[聯絡信箱]</span><span class="tk-i">LINE・Instagram：[帳號]</span></span></div></div><button type="button" class="tk-pause" aria-pressed="false" aria-label="暫停字帶">暫停</button></div>
+<header class="top band"><a class="brand" href="index.html">[公司名稱]</a><nav><a class="back" href="index.html">← 問題總覽</a><button type="button" class="toggle" id="toggle" aria-pressed="false">暫停動態</button></nav></header>
+<section class="phero band"><div class="inner">
+<div class="eyebrow set"><b>04+</b>座位視角</div>
+<h1 class="ph1 in-l"><span class="hl">坐這裡，看得到什麼？</span></h1>
+<p class="lead set" style="animation-delay:300ms">點一個座位，就能看到從那裡望向舞台的樣子。以東吳松怡廳 <b>471 席</b>、55 人管弦樂編制為例；拖曳畫面可以左右張望。</p>
+</div><div class="ghost" aria-hidden="true">04</div></section>
+
+<section class="band"><div class="inner">
+<div class="sv">
+  <div>
+    <div class="view3d" id="view" role="img" aria-label="從選定座位望向舞台的 3D 模擬畫面">
+      <div class="seatname" id="seatname"></div>
+      <div class="hint">拖曳張望・雙擊回正</div>
+      <div class="fail" id="fail">這台裝置無法顯示 3D 畫面。右邊的座位圖與數字仍然可以使用。</div>
+    </div>
+  </div>
+  <div class="side">
+    <h2>選一個座位</h2>
+    <svg class="map" id="map" tabindex="0" role="application" aria-label="松怡廳座位圖，方向鍵移動座位" viewBox="0 0 460 606"></svg>
+    <p class="maplegend">粉紅＝弦樂、銅管・藍＝木管・黑點＝指揮　藍色虛線以下為階梯座位（推估）</p>
+    <div class="pick">
+      <span class="lab">第</span><select id="selRow" aria-label="排"></select><span class="lab">排</span>
+      <select id="selNum" aria-label="號"></select><span class="lab">號</span>
+    </div>
+    <div class="pick" id="quick"></div>
+  </div>
+</div>
+
+<div class="stats" aria-live="polite">
+  <div><div class="v" id="sDist">–</div><div class="k">到指揮的距離</div></div>
+  <div><div class="v" id="sAng">–</div><div class="k">偏離舞台中線</div></div>
+  <div><div class="v" id="sSee">–</div><div class="k">看得到頭部的團員（共 55 位）</div></div>
+</div>
+<p class="say" id="say"></p>
+<div class="opts">
+  <button type="button" class="opt" id="oCrowd" aria-pressed="true">顯示其他觀眾</button>
+  <button type="button" class="opt" id="oBatten" aria-pressed="true">顯示燈光吊桿</button>
+</div>
+
+<div class="todo">
+  <h2>還要實地確認</h2>
+  <ol>
+    <li>實際座位排數、每排座位數與走道位置（目前依平面圖推估 18 排，合計 471 席）。</li>
+    <li>階梯從第幾排開始、每排升高多少（目前假設第 9 排起每排升高 0.35 m）。</li>
+    <li>台口高度（目前假設 0.9 m）與台口開口高度（目前假設 7 m）。</li>
+    <li>官方座位編號方式（目前從觀眾的左手邊往右編號）。</li>
+  </ol>
+</div>
+<p class="src">場館尺寸與舞台 17.5 × 9 m：東吳大學場地資料（採購保管組）平面圖與規格表，2026.11.05 核實。團員位置：依本公司 55 人編制試放（第 05 題）。「看得到頭部的團員」只計算其他觀眾頭部的遮擋，是簡化估算，不代表聲音效果。</p>
+</div></section>
+
+<section class="rel band"><div class="inner"><h2>接著你可能想問</h2><a href="venue.html"><span class="n">04</span><span class="t">這個場館有什麼要注意的？</span><span class="ar">→</span></a><a href="plan.html"><span class="n">05</span><span class="t">我們的編制放得下這個舞台嗎？</span><span class="ar">→</span></a></div></section>
+<div class="pixels" data-pixels aria-hidden="true"></div>
+<footer class="foot band"><div class="inner" style="display:contents"><span>資料來源見各頁說明</span><span>v0.1 原型・座位視角</span></div></footer>
+</div>
+<script src="site.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+/* ---------- hall model (meters). x: audience left(-) to right(+); z: 0 = stage front edge, + toward the back; y: up ---------- */
+var STAGE_W=17.5, STAGE_D=9, STAGE_H=0.9, HALL_W=22, HALL_BACK=19.5, CEIL=9, PROS_H=7;
+var ROWS=18, FLAT_ROWS=8, RISE=0.35, EYE=1.15, SEAT_W=0.55;
+var COND={x:0,z:-0.9};
+function rowCount(r){return r<=15?26:27;}
+function rowFloor(r){return r<=FLAT_ROWS?0:(r-FLAT_ROWS)*RISE;}
+var seats=[]; // {r,n,x,z,y}
+(function(){
+  for(var r=1;r<=ROWS;r++){
+    var n=rowCount(r), side=6, mid=n-12, xs=[], i;
+    for(i=0;i<side;i++)xs.push(-8.5+SEAT_W/2+i*SEAT_W);
+    for(i=0;i<mid;i++)xs.push(-mid*SEAT_W/2+SEAT_W/2+i*SEAT_W);
+    for(i=side-1;i>=0;i--)xs.push(8.5-SEAT_W/2-i*SEAT_W);
+    var z0=1.38+(r-1)*1.0;
+    xs.forEach(function(x,k){seats.push({r:r,n:k+1,x:x,z:z0+0.3*(1-Math.pow(x/8.5,2)),y:rowFloor(r)});});
+  }
+})();
+function seatAt(r,n){for(var i=0;i<seats.length;i++)if(seats[i].r===r&&seats[i].n===n)return seats[i];return null;}
+
+/* orchestra: 34 strings, 12 woodwinds, 7 brass, 1 timpani, 1 soloist = 55 */
+var players=[];
+(function(){
+  [[1.6,6],[2.6,8],[3.6,10],[4.6,10]].forEach(function(a){
+    for(var i=0;i<a[1];i++){var t=(-78+156*(i+.5)/a[1])*Math.PI/180;players.push({x:a[0]*Math.sin(t),z:COND.z-a[0]*Math.cos(t),g:'str'});}
+  });
+  for(var i=0;i<6;i++){players.push({x:-2.5+i,z:-5.9,g:'ww'});players.push({x:-2.5+i,z:-6.8,g:'ww'});}
+  for(i=0;i<7;i++)players.push({x:-2.7+i*0.9,z:-7.7,g:'br'});
+  players.push({x:4.3,z:-7.4,g:'tp'});
+  players.push({x:-1.5,z:-0.8,g:'solo'});
+})();
+var HEAD_Y=STAGE_H+1.2;
+
+/* ---------- 2D seat map ---------- */
+var map=document.getElementById('map'), SC=19, OX=230, OZ=40; // px per m; origin: stage front center at (OX, OZ+9*SC)
+function mx(x){return OX+x*SC;} function mz(z){return OZ+(z+STAGE_D)*SC;}
+var NS='http://www.w3.org/2000/svg', svg='';
+svg+='<rect x="'+mx(-HALL_W/2)+'" y="'+mz(-STAGE_D)+'" width="'+HALL_W*SC+'" height="'+(STAGE_D+HALL_BACK)*SC+'" fill="none" stroke="#1E1D1B" stroke-width="2"/>';
+svg+='<rect x="'+mx(-STAGE_W/2)+'" y="'+mz(-STAGE_D)+'" width="'+STAGE_W*SC+'" height="'+STAGE_D*SC+'" fill="#DCEEF8"/>';
+svg+='<text x="'+OX+'" y="'+(mz(-STAGE_D)-10)+'" text-anchor="middle" font-size="12" font-weight="700" fill="#4A4844">舞台 17.5 × 9 m</text>';
+players.forEach(function(p){svg+='<circle cx="'+mx(p.x)+'" cy="'+mz(p.z)+'" r="2.6" fill="'+(p.g==='ww'?'#1AA0DC':p.g==='tp'?'#1E1D1B':'#EC5A9B')+'"/>';});
+svg+='<circle cx="'+mx(COND.x)+'" cy="'+mz(COND.z)+'" r="3.4" fill="#1E1D1B"/>';
+svg+='<line x1="'+mx(-HALL_W/2)+'" x2="'+mx(HALL_W/2)+'" y1="'+mz(1.38+FLAT_ROWS-0.5)+'" y2="'+mz(1.38+FLAT_ROWS-0.5)+'" stroke="#1AA0DC" stroke-dasharray="4 3"/>';
+for(var r=1;r<=ROWS;r+=1){if(r===1||r%5===0||r===ROWS)svg+='<text x="'+(mx(-HALL_W/2)+6)+'" y="'+(mz(1.38+r-1)+3.5)+'" font-size="9.5" fill="#4A4844">'+r+'</text>';}
+seats.forEach(function(s,i){svg+='<circle class="seat" data-i="'+i+'" cx="'+mx(s.x).toFixed(1)+'" cy="'+mz(s.z).toFixed(1)+'" r="4.3" fill="#E7C3D4"/>';});
+svg+='<circle id="selRing" r="8" fill="none" stroke="#C23E7D" stroke-width="2.5"/>';
+svg+='<text x="'+OX+'" y="'+(mz(HALL_BACK)+16)+'" text-anchor="middle" font-size="11" fill="#4A4844">大廳・入口</text>';
+map.innerHTML=svg;
+var seatEls=map.querySelectorAll('.seat'), ring=document.getElementById('selRing');
+
+var selRow=document.getElementById('selRow'), selNum=document.getElementById('selNum');
+for(r=1;r<=ROWS;r++)selRow.insertAdjacentHTML('beforeend','<option value="'+r+'">'+r+'</option>');
+function fillNums(r,n){var h='';for(var i=1;i<=rowCount(r);i++)h+='<option value="'+i+'">'+i+'</option>';selNum.innerHTML=h;selNum.value=Math.min(n,rowCount(r));}
+var QUICK=[['第 1 排正中',1,13],['第 6 排正中',6,13],['階梯第一排',9,13],['最後一排',18,14],['前排最左邊',3,1]];
+var qh='';QUICK.forEach(function(q,i){qh+='<button type="button" data-q="'+i+'">'+q[0]+'</button>';});
+document.getElementById('quick').innerHTML=qh;
+
+/* ---------- visibility estimate: other audience heads blocking each player's head ---------- */
+function visibleCount(s){
+  var ex=s.x, ey=s.y+EYE, ez=s.z, cnt=0, R=0.12;
+  for(var p=0;p<players.length;p++){
+    var px=players[p].x, py=HEAD_Y, pz=players[p].z, dx=px-ex, dy=py-ey, dz=pz-ez, L2=dx*dx+dy*dy+dz*dz, hit=false;
+    for(var k=0;k<seats.length&&!hit;k++){
+      var o=seats[k]; if(o===s||o.z>=ez-0.2)continue;
+      var hx=o.x-ex, hy=o.y+EYE-ey, hz=o.z-ez, t=(hx*dx+hy*dy+hz*dz)/L2;
+      if(t<=0||t>=1)continue;
+      var cx=hx-t*dx, cy=hy-t*dy, cz=hz-t*dz;
+      if(cx*cx+cy*cy+cz*cz<R*R)hit=true;
+    }
+    if(!hit)cnt++;
+  }
+  return cnt;
+}
+
+/* ---------- 3D ---------- */
+var view=document.getElementById('view'), ok=!!window.THREE, renderer, scene, cam, crowd, battens;
+try{ if(ok){renderer=new THREE.WebGLRenderer({antialias:true});} }catch(e){ok=false;}
+if(!ok){document.getElementById('fail').style.display='flex';}
+var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+var camPos={x:0,y:1,z:8}, target={x:0,y:STAGE_H+1,z:-3.5}, yaw=0, pitch=0, tween=null, dirty=true;
+
+if(ok){
+  renderer.setPixelRatio(Math.min(2,devicePixelRatio||1));
+  renderer.setClearColor(0xF1EEE8);
+  view.insertBefore(renderer.domElement,view.firstChild);
+  scene=new THREE.Scene();
+  scene.fog=new THREE.Fog(0xF1EEE8,30,60);
+  cam=new THREE.PerspectiveCamera(55,16/10,0.05,120);
+  scene.add(new THREE.HemisphereLight(0xFFFFFF,0xE9E2D6,0.85));
+  var sun=new THREE.DirectionalLight(0xFFFFFF,0.55); sun.position.set(4,12,10); scene.add(sun);
+  var spot=new THREE.DirectionalLight(0xFFF4E6,0.45); spot.position.set(0,10,4); spot.target.position.set(0,0,-4); scene.add(spot); scene.add(spot.target);
+  function M(c){return new THREE.MeshLambertMaterial({color:c});}
+  function T(c){return new THREE.MeshLambertMaterial({color:c,transparent:true,opacity:0.5,depthWrite:false});}
+  function box(w,h,d,x,y,z,mat){var m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);m.position.set(x,y,z);scene.add(m);return m;}
+  var wall=M(0xF3EFE8), floor=M(0xE6DFD3), wood=M(0xD9BF95), ink=M(0x1E1D1B);
+  // hall shell
+  box(HALL_W,0.1,HALL_BACK+STAGE_D+2,0,-0.05,(HALL_BACK-STAGE_D)/2,floor);
+  box(0.2,CEIL,HALL_BACK,-HALL_W/2,CEIL/2,HALL_BACK/2,wall);
+  box(0.2,CEIL,HALL_BACK,HALL_W/2,CEIL/2,HALL_BACK/2,wall);
+  box(HALL_W,CEIL,0.2,0,CEIL/2,HALL_BACK,wall);
+  box(HALL_W,0.2,HALL_BACK,0,CEIL,HALL_BACK/2,M(0xF7F4EE));
+  // proscenium + stage house
+  var pw=(HALL_W-STAGE_W)/2;
+  box(pw,CEIL,0.4,-(STAGE_W/2+pw/2),CEIL/2,0.2,wall); box(pw,CEIL,0.4,(STAGE_W/2+pw/2),CEIL/2,0.2,wall);
+  box(STAGE_W,CEIL-STAGE_H-PROS_H,0.4,0,STAGE_H+PROS_H+(CEIL-STAGE_H-PROS_H)/2,0.2,wall);
+  box(STAGE_W,STAGE_H,STAGE_D,0,STAGE_H/2,-STAGE_D/2,wood);
+  box(STAGE_W,13,0.2,0,6.5,-STAGE_D,M(0xE9DECB));
+  box(0.2,13,STAGE_D,-STAGE_W/2,6.5,-STAGE_D/2,M(0xEFEAE1)); box(0.2,13,STAGE_D,STAGE_W/2,6.5,-STAGE_D/2,M(0xEFEAE1));
+  box(STAGE_W,0.04,0.06,0,STAGE_H+0.02,-0.03,M(0xEC5A9B)); // stage edge line
+  battens=new THREE.Group();
+  for(var b=0;b<5;b++){var bm=new THREE.Mesh(new THREE.BoxGeometry(15,0.04,0.04),M(0x7FC3E6));bm.position.set(0,STAGE_H+6.2,-1.2-b*1.7);battens.add(bm);}
+  scene.add(battens);
+  // raked steps
+  for(r=FLAT_ROWS+1;r<=ROWS;r++){box(17.6,rowFloor(r),1.0,0,rowFloor(r)/2,1.38+(r-1)+0.1,floor);}
+  box(17.6,rowFloor(ROWS),HALL_BACK-(1.38+ROWS-0.4),0,rowFloor(ROWS)/2,(1.38+ROWS-0.4+HALL_BACK)/2,floor);
+  // orchestra
+  var colors={str:0xEC5A9B,ww:0x1AA0DC,br:0xC23E7D,tp:0x1E1D1B,solo:0xEC5A9B};
+  var chairM=M(0x3A3835), skin=M(0xF0D9C4);
+  players.forEach(function(p){
+    box(0.42,0.45,0.42,p.x,STAGE_H+0.225,p.z,chairM);
+    var body=new THREE.Mesh(new THREE.CylinderGeometry(0.17,0.21,0.62,10),M(colors[p.g]));
+    body.position.set(p.x,STAGE_H+0.45+0.31,p.z);scene.add(body);
+    var head=new THREE.Mesh(new THREE.SphereGeometry(0.12,12,10),skin);head.position.set(p.x,HEAD_Y,p.z);scene.add(head);
+    if(p.g!=='tp'){var st=box(0.5,0.03,0.35,p.x+(COND.x-p.x)*0.18,STAGE_H+1.05,p.z+(COND.z-p.z)*0.18,ink);st.lookAt(COND.x,STAGE_H+1.05,COND.z);}
+  });
+  var tim=new THREE.Mesh(new THREE.CylinderGeometry(0.38,0.32,0.75,18),M(0xC9A77A));tim.position.set(4.3,STAGE_H+0.38,-6.7);scene.add(tim);
+  box(0.9,0.2,0.9,COND.x,STAGE_H+0.1,COND.z,ink);
+  var cb=new THREE.Mesh(new THREE.CylinderGeometry(0.18,0.2,1.3,10),ink);cb.position.set(COND.x,STAGE_H+0.2+0.65,COND.z);scene.add(cb);
+  var ch=new THREE.Mesh(new THREE.SphereGeometry(0.12,12,10),skin);ch.position.set(COND.x,STAGE_H+0.2+1.42,COND.z);scene.add(ch);
+  // audience seats (instanced) + heads
+  var seatGeo=new THREE.BoxGeometry(0.48,0.85,0.45), seatMesh=new THREE.InstancedMesh(seatGeo,M(0xE2B9CB),seats.length);
+  var headGeo=new THREE.SphereGeometry(0.11,16,12); crowd=new THREE.InstancedMesh(headGeo,T(0xBDB4A8),seats.length);
+  var torsoGeo=new THREE.CylinderGeometry(0.15,0.19,0.5,16), torsos=new THREE.InstancedMesh(torsoGeo,T(0xCFC7BC),seats.length);
+  var mtx=new THREE.Matrix4();
+  seats.forEach(function(s,i){
+    mtx.makeTranslation(s.x,s.y+0.425,s.z+0.12);seatMesh.setMatrixAt(i,mtx);
+    mtx.makeTranslation(s.x,s.y+EYE,s.z);crowd.setMatrixAt(i,mtx);
+    mtx.makeTranslation(s.x,s.y+0.72,s.z+0.02);torsos.setMatrixAt(i,mtx);
+  });
+  scene.add(seatMesh);scene.add(crowd);scene.add(torsos);
+  crowd.userData.torsos=torsos;
+}
+var hidden=-1;
+function hideSelf(i){
+  if(!ok)return;var mtx=new THREE.Matrix4(),t=crowd.userData.torsos;
+  [hidden,i].forEach(function(k,j){if(k<0)return;var s=seats[k];
+    if(j===0){mtx.makeTranslation(s.x,s.y+EYE,s.z);crowd.setMatrixAt(k,mtx);mtx.makeTranslation(s.x,s.y+0.72,s.z+0.02);t.setMatrixAt(k,mtx);}
+    else{mtx.makeScale(0,0,0);crowd.setMatrixAt(k,mtx);t.setMatrixAt(k,mtx);}});
+  crowd.instanceMatrix.needsUpdate=true;t.instanceMatrix.needsUpdate=true;hidden=i;
+}
+function size(){
+  if(!ok)return;var w=view.clientWidth,h=view.clientHeight;renderer.setSize(w,h,false);cam.aspect=w/h;
+  cam.fov=w/h<1.45?64:55;cam.updateProjectionMatrix();dirty=true;
+}
+function apply(){
+  cam.position.set(camPos.x,camPos.y,camPos.z);
+  var dx=target.x-camPos.x, dy=target.y-camPos.y, dz=target.z-camPos.z, base=Math.atan2(dx,-dz), d=Math.hypot(dx,dz), bp=Math.atan2(dy,d);
+  var a=base+yaw, p=Math.max(-1.2,Math.min(1.2,bp+pitch));
+  cam.lookAt(camPos.x+Math.sin(a)*Math.cos(p), camPos.y+Math.sin(p), camPos.z-Math.cos(a)*Math.cos(p));
+}
+function loop(t){
+  if(tween){var k=Math.min(1,(t-tween.t0)/tween.dur), e=1-Math.pow(1-k,3);
+    ['x','y','z'].forEach(function(a){camPos[a]=tween.a[a]+(tween.b[a]-tween.a[a])*e;});
+    yaw=tween.yaw*(1-e);pitch=tween.pitch*(1-e);if(k>=1)tween=null;dirty=true;}
+  if(dirty&&ok){apply();renderer.render(scene,cam);dirty=false;}
+  requestAnimationFrame(loop);
+}
+
+/* ---------- selection ---------- */
+var cur=-1;
+function select(i,instant){
+  cur=i;var s=seats[i];
+  seatEls.forEach(function(el){el.setAttribute('fill','#E7C3D4');});
+  seatEls[i].setAttribute('fill','#C23E7D');ring.setAttribute('cx',seatEls[i].getAttribute('cx'));ring.setAttribute('cy',seatEls[i].getAttribute('cy'));
+  selRow.value=s.r;fillNums(s.r,s.n);
+  var dist=Math.hypot(s.x-COND.x,s.z-COND.z,s.y+EYE-(STAGE_H+1.6)), ang=Math.atan2(Math.abs(s.x),s.z+3.5)*180/Math.PI, see=visibleCount(s);
+  document.getElementById('sDist').innerHTML=dist.toFixed(1)+'<small>m</small>';
+  document.getElementById('sAng').innerHTML=Math.round(ang)+'<small>°</small>';
+  document.getElementById('sSee').innerHTML=see+'<small>位</small>';
+  document.getElementById('seatname').innerHTML='<b>第 '+s.r+' 排 '+s.n+' 號</b>';
+  var eyeRel=s.y+EYE-STAGE_H, side=s.x<-4.5?'左側區':s.x>4.5?'右側區':'中間區';
+  var txt=side+(s.r<=FLAT_ROWS?'・平面區':'・階梯區')+'。眼睛高度'+(eyeRel>=0?'比舞台地板高 ':'比舞台地板低 ')+Math.abs(eyeRel).toFixed(2)+' m';
+  txt+=eyeRel<0.6?'，看團員主要是平視，後排木管、銅管容易被前排團員擋住。':eyeRel>2?'，可以由上往下看到整個編制的排列。':'，前後排團員都看得到一部分。';
+  if(ang>35)txt+=' 偏角較大，會看到比較多側面。';
+  document.getElementById('say').textContent=txt;
+  hideSelf(i);
+  try{history.replaceState(null,'','#r'+s.r+'n'+s.n);}catch(e){}
+  var b={x:s.x,y:s.y+EYE,z:s.z};
+  if(instant||reduce||!ok){camPos=b;yaw=0;pitch=0;tween=null;dirty=true;}
+  else tween={a:{x:camPos.x,y:camPos.y,z:camPos.z},b:b,t0:performance.now(),dur:700,yaw:yaw,pitch:pitch};
+}
+map.addEventListener('click',function(e){var el=e.target.closest('.seat');if(el)select(+el.dataset.i);});
+map.addEventListener('keydown',function(e){
+  if(cur<0)return;var s=seats[cur],t=null;
+  if(e.key==='ArrowLeft')t=seatAt(s.r,Math.max(1,s.n-1));
+  else if(e.key==='ArrowRight')t=seatAt(s.r,Math.min(rowCount(s.r),s.n+1));
+  else if(e.key==='ArrowUp')t=seatAt(Math.max(1,s.r-1),Math.min(s.n,rowCount(Math.max(1,s.r-1))));
+  else if(e.key==='ArrowDown')t=seatAt(Math.min(ROWS,s.r+1),Math.min(s.n,rowCount(Math.min(ROWS,s.r+1))));
+  if(t){e.preventDefault();select(seats.indexOf(t));}
+});
+selRow.addEventListener('change',function(){var r=+selRow.value;fillNums(r,+selNum.value);select(seats.indexOf(seatAt(r,+selNum.value)));});
+selNum.addEventListener('change',function(){select(seats.indexOf(seatAt(+selRow.value,+selNum.value)));});
+document.getElementById('quick').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;var q=QUICK[+b.dataset.q];select(seats.indexOf(seatAt(q[1],q[2])));});
+function toggle(id,fn){var b=document.getElementById(id);b.addEventListener('click',function(){var on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',on);fn(on);dirty=true;});}
+toggle('oCrowd',function(on){if(ok){crowd.visible=on;crowd.userData.torsos.visible=on;}});
+toggle('oBatten',function(on){if(ok)battens.visible=on;});
+
+/* drag to look around */
+var drag=null;
+view.addEventListener('pointerdown',function(e){drag={x:e.clientX,y:e.clientY,yaw:yaw,pitch:pitch};tween=null;view.setPointerCapture(e.pointerId);});
+view.addEventListener('pointermove',function(e){if(!drag)return;var w=view.clientWidth;
+  yaw=Math.max(-1.1,Math.min(1.1,drag.yaw+(e.clientX-drag.x)/w*1.6));pitch=Math.max(-0.5,Math.min(0.5,drag.pitch-(e.clientY-drag.y)/w*1.6));dirty=true;});
+view.addEventListener('pointerup',function(){drag=null;});view.addEventListener('pointercancel',function(){drag=null;});
+view.addEventListener('dblclick',function(){if(reduce){yaw=0;pitch=0;dirty=true;}else tween={a:{x:camPos.x,y:camPos.y,z:camPos.z},b:{x:camPos.x,y:camPos.y,z:camPos.z},t0:performance.now(),dur:400,yaw:yaw,pitch:pitch};});
+
+window.addEventListener('resize',size);
+size();
+var hm=/^#r(\d+)n(\d+)$/.exec(location.hash), hs=hm&&seatAt(+hm[1],+hm[2]);
+select(seats.indexOf(hs||seatAt(6,13)),true);
+requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
