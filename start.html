@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>怎麼開始合作？・演出準備度診斷</title>
+<meta name="description" content="花 2 分鐘回答 8 題演出準備度診斷，馬上知道你的音樂會還缺什麼、適合從哪個方案開始。答案只留在你的瀏覽器。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="site.css">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+
+.steps{list-style:none;margin:8px 0 0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px 28px;max-width:1100px}
+.steps li{padding-top:12px;border-top:2px solid var(--ink)}
+.steps b{display:block;font-size:clamp(30px,3.4vw,44px);font-weight:900;line-height:1;color:transparent;-webkit-text-stroke:1.5px var(--cyan);margin-bottom:8px}
+.steps span{font-size:15px;font-weight:700;line-height:1.6}
+.steps small{display:block;font-size:13px;font-weight:500;color:#4A4844;margin-top:4px;line-height:1.6}
+
+.quiz{max-width:900px;margin-top:48px}
+.quiz h2,.result h2,.contact2 h2{margin:0 0 6px;font-size:14px;letter-spacing:.3em;font-weight:900;color:var(--pink-deep)}
+.quiz .note{margin:0 0 8px;font-size:13px;color:#4A4844;line-height:1.7}
+.progress{font-size:13px;font-weight:700;color:#4A4844;margin:0 0 4px;font-variant-numeric:tabular-nums}
+.bar{height:4px;background:#E2DFD8;margin-bottom:8px}
+.bar i{display:block;height:100%;width:0;background:var(--pink);transition:width 300ms cubic-bezier(.16,1,.3,1)}
+fieldset{border:0;margin:0;padding:22px 0 18px;border-bottom:1px solid #E2DFD8;min-width:0}
+legend{padding:0;font-size:clamp(18px,1.9vw,22px);font-weight:900;line-height:1.5;display:flex;gap:12px;align-items:baseline}
+legend .n{font-size:15px;color:var(--pink-deep);font-variant-numeric:tabular-nums;flex:none}
+.why{margin:6px 0 10px;font-size:13px;color:#4A4844;line-height:1.7;padding-left:30px}
+.opts{display:flex;flex-wrap:wrap;gap:4px 22px;padding-left:30px}
+.opts label{position:relative;display:inline-flex;align-items:center;min-height:44px;cursor:pointer;font-size:15px;font-weight:700;color:#4A4844}
+.opts input{position:absolute;opacity:0;width:1px;height:1px;margin:0}
+.opts span{padding:2px 0;background:linear-gradient(var(--pink),var(--pink)) no-repeat 0 85% / 0 .4em;transition:background-size 200ms cubic-bezier(.16,1,.3,1),color 150ms ease}
+.opts input:checked + span{color:var(--ink);background-size:100% .4em}
+.opts input:focus-visible + span{outline:3px solid var(--cyan);outline-offset:3px}
+@media (hover:hover) and (pointer:fine){.opts label:hover span{color:var(--ink)}}
+.go{display:flex;flex-wrap:wrap;gap:8px 24px;align-items:center;margin-top:24px}
+.btn{display:inline-flex;align-items:center;min-height:44px;padding:0;border:0;background:none;font:inherit;font-size:17px;font-weight:900;color:var(--ink);cursor:pointer;
+  background-image:linear-gradient(var(--pink),var(--pink));background-repeat:no-repeat;background-position:0 78%;background-size:100% .4em}
+.btn.sub{font-size:14px;font-weight:700;color:#4A4844;background-size:0 .4em}
+.btn:focus-visible{outline:3px solid var(--cyan);outline-offset:4px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.missing{font-size:13px;color:var(--pink-deep);font-weight:700}
+
+.result{max-width:900px;margin-top:56px;padding-top:18px;border-top:3px solid var(--ink)}
+.result[hidden]{display:none}
+.score{display:flex;align-items:baseline;gap:18px;flex-wrap:wrap;margin:6px 0 4px}
+.score b{font-size:clamp(64px,9vw,120px);font-weight:900;line-height:1;font-variant-numeric:tabular-nums}
+.score small{font-size:20px;font-weight:700;color:#4A4844}
+.level{font-size:clamp(24px,3vw,36px);font-weight:900;margin:4px 0 10px}
+.level .hl{mix-blend-mode:normal}
+.summary{font-size:16px;line-height:1.8;max-width:40em;margin:0}
+.gaps{margin:26px 0 0}
+.gaps h3,.plan h3{margin:0 0 6px;font-size:16px;font-weight:900}
+.gaps ol{margin:0;padding-left:1.4em;font-size:15px;line-height:1.8}
+.gaps li{margin-bottom:8px}
+.gaps li b{display:block}
+.gaps li span{font-size:14px;color:#4A4844}
+.plan{margin-top:26px;padding-top:14px;border-top:3px solid var(--pink)}
+.plan p{margin:0;font-size:15px;line-height:1.8}
+.plan .big{font-size:22px;font-weight:900;margin-bottom:4px}
+.copied{font-size:13px;color:var(--cyan-deep);font-weight:700}
+
+.contact2{max-width:900px;margin-top:56px}
+.contact2 p{margin:0 0 6px;font-size:16px;line-height:1.8}
+.contact2 .ch{display:flex;flex-wrap:wrap;gap:4px 28px;margin-top:8px;font-size:17px;font-weight:900}
+.privacy{margin:28px 0 0;font-size:13px;color:#4A4844;line-height:1.7;max-width:52em}
+
+@media (max-width:760px){
+  .steps{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .why,.opts{padding-left:0}
+}
+@media (prefers-reduced-motion: reduce){.bar i,.opts span{transition:none}}
+</style>
+</head>
+<body>
+<div id="root">
+<div class="ticker" id="ticker"><div class="tk-view"><div class="tk-track"><span class="tk-g"><span class="tk-i">專注過程</span><span class="tk-i">從一張椅子、一個譜架，到演出落幕</span><span class="tk-i">一個窗口，資訊不落差</span><span class="tk-i">每一筆場館資料都有來源</span><span class="tk-i">先試放，再定案</span><span class="tk-i">[聯絡信箱]</span><span class="tk-i">LINE・Instagram：[帳號]</span></span><span class="tk-g" aria-hidden="true"><span class="tk-i">專注過程</span><span class="tk-i">從一張椅子、一個譜架，到演出落幕</span><span class="tk-i">一個窗口，資訊不落差</span><span class="tk-i">每一筆場館資料都有來源</span><span class="tk-i">先試放，再定案</span><span class="tk-i">[聯絡信箱]</span><span class="tk-i">LINE・Instagram：[帳號]</span></span></div></div><button type="button" class="tk-pause" aria-pressed="false" aria-label="暫停字帶">暫停</button></div>
+<header class="top band"><a class="brand" href="index.html">[公司名稱]</a><nav><a class="back" href="index.html">← 問題總覽</a><button type="button" class="toggle" id="toggle" aria-pressed="false">暫停動態</button></nav></header>
+<section class="phero band"><div class="inner">
+<div class="eyebrow set"><b>10</b>開始合作</div>
+<h1 class="ph1 in-l"><span class="hl">怎麼開始合作？</span></h1>
+<p class="lead set" style="animation-delay:300ms">先花 <b>2 分鐘</b>做演出準備度診斷：8 題答完，就知道你的音樂會還缺什麼、適合從哪個方案開始。</p>
+</div><div class="ghost" aria-hidden="true">10</div></section>
+
+<section class="band"><div class="inner">
+<ol class="steps" aria-label="合作的四個步驟">
+  <li><b>1</b><span>做準備度診斷</span><small>就是下面這 8 題，免費、免填個資。</small></li>
+  <li><b>2</b><span>把結果傳給我們</span><small>按「複製結果」，貼到 LINE 或 Email。</small></li>
+  <li><b>3</b><span>30 分鐘需求訪談</span><small>聊曲目、編制、場地，和上一場最頭痛的事。</small></li>
+  <li><b>4</b><span>報價與簽約</span><small>收到訂金後開始，第一週建立製作總表。</small></li>
+</ol>
+
+<form class="quiz" id="quiz" novalidate>
+  <h2>演出準備度診斷</h2>
+  <p class="note">選最接近現況的答案就好，不確定就選中間那個。</p>
+  <p class="progress" id="prog" aria-live="polite">已回答 0 / 8</p>
+  <div class="bar" aria-hidden="true"><i id="barI"></i></div>
+  <div id="qs"></div>
+  <div class="go">
+    <button type="submit" class="btn" id="submit">看診斷結果 →</button>
+    <button type="reset" class="btn sub" id="redo">全部重來</button>
+    <span class="missing" id="missing" aria-live="polite"></span>
+  </div>
+</form>
+
+<section class="result" id="result" hidden tabindex="-1" aria-labelledby="resH">
+  <h2 id="resH">診斷結果</h2>
+  <div class="score"><b id="rScore">0</b><small>/ 16 分</small></div>
+  <p class="level"><span class="hl" id="rLevel"></span></p>
+  <p class="summary" id="rSum"></p>
+  <div class="gaps" id="rGaps"></div>
+  <div class="plan">
+    <h3>建議從這裡開始</h3>
+    <p class="big" id="rPlan"></p>
+    <p id="rPlanWhy"></p>
+  </div>
+  <div class="go">
+    <button type="button" class="btn" id="copy">複製結果，傳給我們</button>
+    <a class="btn sub" href="pricing.html">看三個方案的完整內容</a>
+    <span class="copied" id="copied" aria-live="polite"></span>
+  </div>
+</section>
+
+<section class="contact2" aria-labelledby="ctH">
+  <h2 id="ctH">聯絡我們</h2>
+  <p>附上診斷結果，我們會在 2 個工作天內回覆，約一個 30 分鐘的訪談時間。</p>
+  <div class="ch"><span>Email：[聯絡信箱]</span><span>LINE：[帳號]</span><span>Instagram：[帳號]</span></div>
+</section>
+
+<p class="privacy">你的答案只在這個瀏覽器裡計算，不會傳送、不會儲存，關掉頁面就消失。要給我們看，請自己按「複製結果」再傳。方案價格見第 06 題；分數只是初步參考，正式建議以訪談後的報價為準。</p>
+</div></section>
+
+<section class="rel band"><div class="inner"><h2>接著你可能想問</h2><a href="pricing.html"><span class="n">06</span><span class="t">要準備多久、花多少錢？</span><span class="ar">→</span></a><a href="about.html"><span class="n">01</span><span class="t">你們是誰？能幫我們的音樂會做什麼？</span><span class="ar">→</span></a></div></section>
+<div class="pixels" data-pixels aria-hidden="true"></div>
+<footer class="foot band"><div class="inner" style="display:contents"><span>題目與評分依本公司接案流程（G0 選案）</span><span>v0.1 原型</span></div></footer>
+</div>
+<script src="site.js"></script>
+<script>
+(function(){
+/* same 8 items and thresholds as the internal SOP gate G0 */
+var Q=[
+ {t:'演出日期和場館確定了嗎？',why:'場館檔期決定了所有時程；學校演奏廳通常要前一年確認。',o:['已簽約或已核定','已選好，還在申請','還沒決定'],
+  gap:'先鎖定場館與日期',tip:'場館通常要提早申請檔期。先列 2–3 個候選日期，向場館確認可用時段與申請流程。'},
+ {t:'曲目和演出順序定了嗎？',why:'CUE 表、換場和燈光都依曲序排。',o:['都定了','大致定了，順序還會調','還沒定'],
+  gap:'定下曲目與演出順序',tip:'至少在演出前 2 個月定曲目；順序可以晚一點，但換場多的曲子要先排好位置。'},
+ {t:'編制和樂手名單確定了嗎？',why:'座位表、譜架、椅子數量都從編制來。',o:['都確定了','編制確定，名單還在找','還沒確定'],
+  gap:'確定編制與樂手名單',tip:'先定各聲部人數就能開始排座位；名單可以後補，但要在演出前 6 週確定。'},
+ {t:'有一位能拍板的單一聯絡人嗎？',why:'資訊落差最常發生在「不知道該問誰」。',o:['有，而且他能做決定','有聯絡人，但決定要再問別人','沒有，大家一起討論'],
+  gap:'指定一位能拍板的聯絡人',tip:'所有決定都經過同一個人，其他人只要看最新版本就好，群組裡不再各說各話。'},
+ {t:'預算來源確定了嗎？',why:'有補助或贊助的演出，結案時通常要交成果報告。',o:['確定了（團費、補助或贊助）','部分確定，還在申請','還不清楚'],
+  gap:'確認預算來源',tip:'若要申請補助，送件期限常在演出前半年到一年，先查好時程；有補助就要預留結案報告的工作。'},
+ {t:'場館的規範拿到了嗎？',why:'進撤場時間、可否飲食、遲到入場規定，都會改變當天流程。',o:['拿到也看過了','知道有，還沒拿到','不知道有規範'],
+  gap:'向場館索取使用規範',tip:'問清楚：時段、進撤場、彩排時段、可否錄影、遲到入場規定、需要哪些保險。'},
+ {t:'貴賓、致詞、獻花等儀式需求知道了嗎？',why:'儀式是 CUE 表裡最容易臨時變動的部分。',o:['都確定了','知道有，細節未定','還沒想到'],
+  gap:'列出貴賓與儀式流程',tip:'誰致詞、幾分鐘、誰上台獻花、紀念品誰拿——每一項都要指定一位負責人。'},
+ {t:'離演出還有多久？',why:'時間決定我們能陪你走多遠。',o:['3 個月以上','6 週到 3 個月','不到 6 週'],
+  gap:'時間很緊',tip:'不到 6 週仍然可以做，但只能優先處理最關鍵的資料；請儘快聯絡我們。'}
+];
+var qs=document.getElementById('qs'), h='';
+Q.forEach(function(q,i){
+  h+='<fieldset><legend><span class="n">'+String(i+1).padStart(2,'0')+'</span>'+q.t+'</legend><p class="why">'+q.why+'</p><div class="opts">';
+  q.o.forEach(function(o,k){h+='<label><input type="radio" name="q'+i+'" value="'+(2-k)+'"><span>'+o+'</span></label>';});
+  h+='</div></fieldset>';
+});
+qs.innerHTML=h;
+var form=document.getElementById('quiz'), prog=document.getElementById('prog'), barI=document.getElementById('barI'), miss=document.getElementById('missing');
+function answers(){return Q.map(function(_,i){var c=form.querySelector('input[name="q'+i+'"]:checked');return c?+c.value:null;});}
+function update(){var a=answers(),n=a.filter(function(v){return v!==null;}).length;prog.textContent='已回答 '+n+' / 8';barI.style.width=(n/8*100)+'%';if(n===8)miss.textContent='';}
+form.addEventListener('change',update);
+form.addEventListener('reset',function(){setTimeout(function(){update();document.getElementById('result').hidden=true;miss.textContent='';},0);});
+var last='';
+form.addEventListener('submit',function(e){
+  e.preventDefault();
+  var a=answers(), first=a.indexOf(null);
+  if(first>=0){miss.textContent='還有 '+a.filter(function(v){return v===null;}).length+' 題沒回答';form.querySelectorAll('fieldset')[first].querySelector('input').focus();return;}
+  var s=a.reduce(function(x,y){return x+y;},0), time=a[7];
+  var level,sum;
+  if(s>=12){level='準備得不錯';sum='主要的資料都齊了，接下來最值得投資的是「資訊不落差」：讓每個人在對的時間拿到對的那一版。';}
+  else if(s>=8){level='還有幾個缺口';sum='演出的骨架有了，但下面幾件事還沒定，最容易在演出前兩週變成臨時狀況。建議先補這幾項。';}
+  else{level='先把基礎打好';sum='現在找製作團隊還太早，先把下面幾件事定下來最划算。可以帶著這份清單來找我們聊，免費。';}
+  var gaps=[];a.forEach(function(v,i){if(v<2)gaps.push(i);});
+  gaps.sort(function(x,y){return a[x]-a[y];});
+  var g='';
+  if(gaps.length){g='<h3>還缺的 '+gaps.length+' 件事（從最急的開始）</h3><ol>';gaps.forEach(function(i){g+='<li><b>'+Q[i].gap+'</b><span>'+Q[i].tip+'</span></li>';});g+='</ol>';}
+  else g='<h3>沒有明顯的缺口</h3><p class="summary">8 題都拿到滿分。</p>';
+  var plan,why;
+  if(time===0){plan='直接聯絡我們';why='離演出不到 6 週，任何方案的標準時程都來不及，我們會一起看還能先做哪幾件最關鍵的事。';}
+  else if(s<8){plan='先不用委託，先補缺口';why='把上面的事情定下來再來找我們，費用和時間都會省很多。需要的話，也可以先預約按時數計費的顧問諮詢。';}
+  else if(s<12){plan='基本・資訊包';why='從資料整理開始：座位表、分角色 CUE 表、時段分工表一次做好，缺口會在訪談時一起補齊。首發價 19,800 元／場（前 3 團）。';}
+  else if(time===2){plan='標準・舞台監製＋資訊包';why='時間充裕、資料也齊，可以從彩排到演出當天都交給我們，含每週變更管理與 2 位舞台助理。若有補助或贊助要結案，可以考慮加值方案。';}
+  else{plan='基本・資訊包，或標準方案';why='資料很齊，但時間介於 6 週到 3 個月。基本方案一定來得及；如果希望我們彩排與演出當天到場，請儘早聯絡確認檔期。';}
+  document.getElementById('rScore').textContent=s;
+  document.getElementById('rLevel').textContent=level;
+  document.getElementById('rSum').textContent=sum;
+  document.getElementById('rGaps').innerHTML=g;
+  document.getElementById('rPlan').textContent=plan;
+  document.getElementById('rPlanWhy').textContent=why;
+  last='【演出準備度診斷】'+s+' / 16 分・'+level+'\n'+Q.map(function(q,i){return (i+1)+'. '+q.t+' → '+q.o[2-a[i]];}).join('\n')+'\n建議：'+plan;
+  var r=document.getElementById('result');r.hidden=false;r.focus({preventScroll:true});
+  r.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
+  document.getElementById('copied').textContent='';
+});
+document.getElementById('copy').addEventListener('click',function(){
+  var done=function(){document.getElementById('copied').textContent='已複製，可以貼到 LINE 或 Email 了';};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(last).then(done,fallback);}else fallback();
+  function fallback(){var t=document.createElement('textarea');t.value=last;t.setAttribute('readonly','');t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();try{document.execCommand('copy');done();}catch(e){document.getElementById('copied').textContent='無法自動複製，請手動選取上面的結果';}document.body.removeChild(t);}
+});
+})();
+</script>
+</body>
+</html>
